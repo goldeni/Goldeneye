@@ -1,4 +1,4 @@
-import Image
+import Image, time
 
 def get_scharr_masks():
 	xmask = {}
@@ -136,5 +136,8 @@ def convolve(pixels, width, height, k):
 def main(img, kern):
 	pixels = list(img.getdata())
 	w, h = img.size
+	print "Convolution Started"
+	start = time.time()
 	outimg = convolve(pixels, w, h, kern)
+	print "Convolution Complete: Time = ", (time.time()-start)*1000, "ms"
 	return outimg

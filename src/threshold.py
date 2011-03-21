@@ -1,11 +1,14 @@
 #!/usr/bin/python
-import Image, math, sys
+import Image, time
 
 # Main thresholding function
 def thresh(img):
+	print "Thresholding started"
+	start = time.time()
 	o = int(otsu(img))
 	lut = [255 if v > int(o) else 0 for v in range(256)] 
 	thr = img.point(lut)
+	print "Thresholding done: time = ", (time.time()-start)*1000, "ms"
 	return thr
 
 # Calculates the optimal threshold using Otsu's Method
