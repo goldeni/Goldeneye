@@ -29,8 +29,7 @@ m.save("../out/3-2.jpg")
 t.save("../out/3-4.jpg")
 
 # Apply various edge-detection filters to the image
-for i in ['prewitt']:
-#, 'sobel', 'roberts', 'scharr']:
+for i in ['prewitt', 'sobel', 'roberts', 'scharr']:
 	#x = operators.main(im, i)
 	#y = operators.main(m, i)
 	#z = operators.main(tm, i)

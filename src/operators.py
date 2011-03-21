@@ -1,5 +1,48 @@
 import Image, time
 
+# Convolve the kernels with the image to approximate the gradient
+def convolve2(pixels, width, height, k):
+        dim = 2
+        if k == 'scharr':
+                xmask, ymask = get_scharr_masks()
+        if k == 'prewitt':
+                xmask, ymask = get_prewitt_masks()
+        if k == 'sobel':
+                xmask, ymask = get_sobel_masks()
+        if k == 'roberts':
+                xmask, ymask = get_roberts_masks()
+                dim = 1
+
+        outimg = Image.new('L', (width, height))
+        outpixels = list(outimg.getdata())
+
+        xkernel = xmask
+        iend = width
+        jend = height
+        mend = dim+1
+        nend = dim+1
+
+
+        for i in range(mend, iend):
+                for j in range(nend, jend):
+                        sumX,sumY = 0,0
+			mag = 0
+                        if j == height-1: outpixels[i+j*width] = 255
+                        elif i == width-1: outpixels[i+j*width] = 255
+                        else:
+                                for m in range(mend):
+                                        for n in range(nend):
+                                                sumX += xmask[m,n] * pixels[(i-m+(j-n)*width)]
+                                                sumY += ymask[m,n] * pixels[(i-m+(j-n)*width)]
+
+			mag = (abs(sumX)+abs(sumY))/(mend*nend)
+                        if mag > 255: mag = 255
+                        if mag < 0: mag = 0
+                        outpixels[i+j*width] = 255 - mag
+        outimg.putdata(outpixels)
+        return outimg
+
+
 def get_scharr_masks():
 	xmask = {}
 	ymask = {}
@@ -138,6 +181,6 @@ def main(img, kern):
 	w, h = img.size
 	print "Convolution Started"
 	start = time.time()
-	outimg = convolve(pixels, w, h, kern)
+	outimg = convolve2(pixels, w, h, kern)
 	print "Convolution Complete: Time = ", (time.time()-start)*1000, "ms"
 	return outimg
