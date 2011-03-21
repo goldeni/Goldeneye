@@ -23,17 +23,18 @@ def convolve2(pixels, width, height, k):
         nend = dim+1
 
 
-        for i in range(mend, iend):
-                for j in range(nend, jend):
+        for i in xrange(0, iend):
+                for j in xrange(0, jend):
                         sumX,sumY = 0,0
 			mag = 0
-                        if j == height-1: outpixels[i+j*width] = 255
-                        elif i == width-1: outpixels[i+j*width] = 255
+                        if j == 0 or j == height-1: mag = 0
+                        elif i == 0 or i == width-1: mag = 0
                         else:
-                                for m in range(mend):
-                                        for n in range(nend):
-                                                sumX += xmask[m,n] * pixels[(i-m+(j-n)*width)]
-                                                sumY += ymask[m,n] * pixels[(i-m+(j-n)*width)]
+                                for m in xrange(mend):
+                                        for n in xrange(nend):
+                                                pix = pixels[(i-m+(j-n)*width)]
+                                                sumX += xmask[m,n] * pix
+                                                sumY += ymask[m,n] * pix
 
 			mag = (abs(sumX)+abs(sumY))/(mend*nend)
                         if mag > 255: mag = 255
