@@ -1,15 +1,19 @@
 #!/usr/bin/python
 import Image, math, sys
 
+# Main thresholding function
 def thresh(img):
 	o = int(otsu(img))
 	lut = [255 if v > int(o) else 0 for v in range(256)] 
 	thr = img.point(lut)
 	return thr
 
+# Calculates the optimal threshold using Otsu's Method
 def otsu(img):
+	# Initialize histogram
 	hist = img.histogram()
 
+	# Get image size
 	dim = img.size
 	total = dim[0]*dim[1]
 
