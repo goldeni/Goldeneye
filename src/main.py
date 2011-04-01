@@ -1,53 +1,61 @@
 #!/usr/bin/python
 
-import Image,sys,ImageFilter,os,medianfilter,threshold,operators,os,time
+from Tkinter import *
+import Image,ImageTk,sys,ImageFilter,os,medianfilter,threshold,operators,os,time
 
-print "Process Started"
-start = time.time()
 
-print "Process Started"
+inFile = sys.argv[1]
 
-img = Image.open(sys.argv[1])
+def main(path):
 
-name = os.path.basename(sys.argv[1])
-print name
-# Convert image to 8-bit if it isn't
-if img.format == 'L': im = img
-else: im = img.convert('L')
 
-# Threshold unblurred image
-#tm = threshold.thresh(im)
+	name = os.path.basename(path)
 
-# Use custom median filter (functional, but slow)
-#m = medianfilter.main(im)
+	print "Process Started on ",name
+	start = time.time()
 
-print "Blurring Started"
-filterstart = time.time()
+	img = Image.open(path)
 
-# use ImageFilter median filter
-m = im.filter(ImageFilter.MedianFilter(11))
+	# Convert image to 8-bit if it isn't
+	if img.format == 'L': im = img
+	else: im = img.convert('L')
 
-print "Blurring Complete: Time = ",time.time()-filterstart,"ms"
+	# Threshold unblurred image
+	#tm = threshold.thresh(im)
 
-# Threshold blurred image
-t = threshold.thresh(m)
+	# Use custom median filter (functional, but slow)
+	#m = medianfilter.main(im)
 
-# Save everything
-im.save("../out/3-1.jpg")
-#tm.save("../out/3-3.jpg")
-m.save("../out/3-2.jpg")
-t.save("../out/3-4.jpg")
+	print "Blurring Started"
+	filterstart = time.time()
 
-# Apply various edge-detection filters to the image
-for i in ['roberts']:
-#, 'sobel', 'roberts', 'scharr']:
-	#x = operators.main(im, i)
-	#y = operators.main(m, i)
-	#z = operators.main(tm, i)
-	p = operators.main(t, i)
-	#x.save("../out/3-1" + i + ".jpg")
-	#y.save("../out/3-2" + i + ".jpg")
-	#z.save("../out/3-3" + i + ".jpg")
-	p.save("../out/3-4" + i + ".jpg")
+	# use ImageFilter median filter
+	m = im.filter(ImageFilter.MedianFilter(11))
 
-print "Process Complete: Time = ",time.time()-start,"ms"
+	print "Burring Complete: Time = ",time.time()-filterstart,"ms"
+
+	# Threshold blurred image
+	t = threshold.thresh(m)
+
+	# Save everything
+	im.save("../out/3-1.jpg")
+	#tm.save("../out/3-3.jpg")
+	m.save("../out/3-2.jpg")
+	t.save("../out/3-4.jpg")
+
+	# Apply various edge-detection filters to the image
+	for i in ['roberts']:
+	#, 'sobel', 'roberts', 'scharr']:
+		#x = operators.main(im, i)
+		#y = operators.main(m, i)
+		#z = operators.main(tm, i)
+		p = operators.main(t, i)
+		#x.save("../out/3-1" + i + ".jpg")
+		#y.save("../out/3-2" + i + ".jpg")
+		#z.save("../out/3-3" + i + ".jpg")
+		p.save("../out/3-4" + i + ".jpg")
+
+	print "Process Complete: Time = ",(time.time()-start)*1000,"ms"
+	return p	
+
+main(inFile)
