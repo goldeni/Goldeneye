@@ -1,47 +1,54 @@
 import Image, time
 
 # Convolve the kernels with the image to approximate the gradient
-def convolve2(pixels, width, height, k):
-        dim = 2
-        if k == 'scharr':
-                xmask, ymask = get_scharr_masks()
-        if k == 'prewitt':
-                xmask, ymask = get_prewitt_masks()
-        if k == 'sobel':
-                xmask, ymask = get_sobel_masks()
-        if k == 'roberts':
-                xmask, ymask = get_roberts_masks()
-                dim = 1
+def convolve(pixels, width, height, k):
 
-        outimg = Image.new('L', (width, height))
-        outpixels = list(outimg.getdata())
+	# Initialize the various kernels
+	dim = 2
+	if k == 'scharr':
+		xmask, ymask = get_scharr_masks()
+	if k == 'prewitt':
+		xmask, ymask = get_prewitt_masks()
+	if k == 'sobel':
+		xmask, ymask = get_sobel_masks()
+	if k == 'roberts':
+		xmask, ymask = get_roberts_masks()
+		dim = 1
 
-        xkernel = xmask
-        iend = width
-        jend = height
-        mend = dim+1
-        nend = dim+1
+	outimg = Image.new('L', (width, height))
+	outpixels = list(outimg.getdata())
+
+	iend = width
+	jend = height
+	mend = dim+1
+	nend = dim+1
 
 
-        for i in xrange(0, iend):
-                for j in xrange(0, jend):
-                        sumX,sumY = 0,0
+	for i in xrange(0, iend):
+		for j in xrange(0, jend):
+			sumX,sumY = 0,0
 			mag = 0
-                        if j == 0 or j == height-1: mag = 0
-                        elif i == 0 or i == width-1: mag = 0
-                        else:
-                                for m in xrange(mend):
-                                        for n in xrange(nend):
-                                                pix = pixels[(i-m+(j-n)*width)]
-                                                sumX += xmask[m,n] * pix
-                                                sumY += ymask[m,n] * pix
+			if j == 0 or j == height-1: mag = 0
+			elif i == 0 or i == width-1: mag = 0
+			else:
+				for m in xrange(mend):
+					for n in xrange(nend):
+						# Sum x and y gradient-approximations
+						pix = pixels[(i-m+(j-n)*width)]
+						sumX += xmask[m,n] * pix
+						sumY += ymask[m,n] * pix
 
+			# Approximate the magnitude of the gradient
 			mag = (abs(sumX)+abs(sumY))/(mend*nend)
-                        if mag > 255: mag = 255
-                        if mag < 0: mag = 0
-                        outpixels[i+j*width] = 255 - mag
-        outimg.putdata(outpixels)
-        return outimg
+
+			# Normalize bad results
+			if mag > 255: mag = 255
+			if mag < 0: mag = 0
+
+			# Output gradient approximation to an image array
+			outpixels[i+j*width] = 255 - mag
+	outimg.putdata(outpixels)
+	return outimg
 
 
 def get_scharr_masks():
@@ -141,47 +148,48 @@ def get_prewitt_masks():
 
 	return (xmask, ymask)
 
-def convolve(pixels, width, height, k):
-	dim = 2
-	if k == 'scharr':
-		xmask, ymask = get_scharr_masks()
-	if k == 'prewitt':
-		xmask, ymask = get_prewitt_masks()
-	if k == 'sobel':
-		xmask, ymask = get_sobel_masks()
-	if k == 'roberts':
-		xmask, ymask = get_roberts_masks()
-		dim = 1
-
-	outimg = Image.new('L', (width, height))
-	outpixels = list(outimg.getdata())
-
-	for y in xrange(height):
-		for x in xrange(width):
-			sumX, sumY, magnitude = 0,0,0
-
-			if y == 0 or y == height-1: magnitude = 0
-			elif x == 0 or x == width-1: magnitude = 0
-			else:
-				for i in xrange(-1,dim):
-					for j in xrange(-1,dim):
-						sumX += (pixels[x+i+(y+j)*width]) * xmask[i+1, j+1]
-						sumY += (pixels[x+i+(y+j)*width]) * ymask[i+1, j+1]
-
-			magnitude = abs(sumX) + abs(sumY)
-
-			if magnitude > 255: magnitude = 255
-			if magnitude < 0: magnitude = 0
-
-			outpixels[x+y*width] = 255 - magnitude
-	outimg.putdata(outpixels)
-	return outimg
+# Old convolve functction
+#def convolve(pixels, width, height, k):
+#	dim = 2
+#	if k == 'scharr':
+#		xmask, ymask = get_scharr_masks()
+#	if k == 'prewitt':
+#		xmask, ymask = get_prewitt_masks()
+#	if k == 'sobel':
+#		xmask, ymask = get_sobel_masks()
+#	if k == 'roberts':
+#		xmask, ymask = get_roberts_masks()
+#		dim = 1
+#
+#	outimg = Image.new('L', (width, height))
+#	outpixels = list(outimg.getdata())
+#
+#	for y in xrange(height):
+#		for x in xrange(width):
+#			sumX, sumY, magnitude = 0,0,0
+#
+#			if y == 0 or y == height-1: magnitude = 0
+#			elif x == 0 or x == width-1: magnitude = 0
+#			else:
+#				for i in xrange(-1,dim):
+#					for j in xrange(-1,dim):
+#						sumX += (pixels[x+i+(y+j)*width]) * xmask[i+1, j+1]
+#						sumY += (pixels[x+i+(y+j)*width]) * ymask[i+1, j+1]
+#
+#			magnitude = abs(sumX) + abs(sumY)
+#
+#			if magnitude > 255: magnitude = 255
+#			if magnitude < 0: magnitude = 0
+#
+#			outpixels[x+y*width] = 255 - magnitude
+#	outimg.putdata(outpixels)
+#	return outimg
 
 def main(img, kern):
 	pixels = list(img.getdata())
 	w, h = img.size
 	print "Convolution Started"
 	start = time.time()
-	outimg = convolve2(pixels, w, h, kern)
+	outimg = convolve(pixels, w, h, kern)
 	print "Convolution Complete: Time = ", (time.time()-start)*1000, "ms"
 	return outimg

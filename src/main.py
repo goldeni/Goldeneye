@@ -4,14 +4,13 @@ from Tkinter import *
 import Image,ImageTk,sys,ImageFilter,os,medianfilter,threshold,operators,os,time
 
 
-inFile = sys.argv[1]
 
 def main(path):
 
 
 	name = os.path.basename(path)
 
-	print "Process Started on ",name
+	print "Process Started on",name
 	start = time.time()
 
 	img = Image.open(path)
@@ -56,6 +55,6 @@ def main(path):
 		p.save("../out/3-4" + i + ".jpg")
 
 	print "Process Complete: Time = ",(time.time()-start)*1000,"ms"
+	print p
 	return p	
 
-main(inFile)
