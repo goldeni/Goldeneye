@@ -1,9 +1,6 @@
 #!/usr/bin/python
 
-from Tkinter import *
-import Image,ImageTk,sys,ImageFilter,os,medianfilter,threshold,operators,os,time
-
-
+import Image,sys,ImageFilter,os,threshold,operators,time,cv
 
 def main(path):
 
@@ -43,16 +40,27 @@ def main(path):
 	t.save("../out/3-4.jpg")
 
 	# Apply various edge-detection filters to the image
-	for i in ['roberts']:
+#	for i in ['roberts']:
 	#, 'sobel', 'roberts', 'scharr']:
 		#x = operators.main(im, i)
 		#y = operators.main(m, i)
 		#z = operators.main(tm, i)
-		p = operators.main(t, i)
+#		p = operators.main(t, i)
 		#x.save("../out/3-1" + i + ".jpg")
 		#y.save("../out/3-2" + i + ".jpg")
 		#z.save("../out/3-3" + i + ".jpg")
-		p.save("../out/3-4" + i + ".jpg")
+#		p.save("../out/3-4" + i + ".jpg")
+
+	# convert t to an opencv image, convolve, then convert back and return
+	
+	convstart = time.time()
+	tmp = cv.CreateImageHeader(t.size, cv.IPL_DEPTH_8U, 1)
+	cv.SetData(tmp, t.tostring())
+	print "Convolution Started"
+	cv.Canny(tmp,tmp,0,255,3)
+	p = Image.fromstring("L", cv.GetSize(tmp), tmp.tostring())
+	print "Convolution Done: Time = ", (time.time()-convstart)*1000
+	p.save("../out/test.jpg")
 
 	print "Process Complete: Time = ",(time.time()-start)*1000,"ms"
 	print p

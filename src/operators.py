@@ -23,7 +23,8 @@ def convolve(pixels, width, height, k):
 	mend = dim+1
 	nend = dim+1
 
-
+	# Main loop
+	# Runs through image and calculates an approximation of the magnitude of the gradient at all points.
 	for i in xrange(0, iend):
 		for j in xrange(0, jend):
 			sumX,sumY = 0,0
@@ -50,7 +51,7 @@ def convolve(pixels, width, height, k):
 	outimg.putdata(outpixels)
 	return outimg
 
-
+# Define edge-detection operators
 def get_scharr_masks():
 	xmask = {}
 	ymask = {}

@@ -5,9 +5,12 @@ import Image, time
 def thresh(img):
 	print "Thresholding started"
 	start = time.time()
+	# Ge threshold
 	o = int(otsu(img))
+	# Apply threshold
 	lut = [255 if v > int(o) else 0 for v in range(256)] 
 	thr = img.point(lut)
+
 	print "Thresholding done: time =", (time.time()-start)*1000, "ms"
 	print "Threshold:",o
 	return thr
@@ -32,7 +35,8 @@ def otsu(img):
 	sumB, wB, wF = 0,0,0
 	varMax, threshold = 0,0
 
-	# Main loop (the entire process thresholds three time. we'll eventually add variables based on which thrershold it is)
+	# Main loop
+	# Runs through all possible thresholds and finds the maximum between-class variance.
 	for t in range(0,int(avg/2)):
 		wB += hist[t]
 		if wB == 0:

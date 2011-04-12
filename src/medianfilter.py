@@ -1,5 +1,7 @@
-import Image, array, math, time
+import Image, math, time, array
 
+# Find the median of the list
+# f=0.5 means an f-value of 0.5, i.e. the median
 def quantile(lst, f=0.5):
 	l,r = 0,256
 	targetCount = int(len(lst)*f)
@@ -14,6 +16,7 @@ def quantile(lst, f=0.5):
 			r = m
 	return l
 
+# faster experimental median using histogram
 #def quantile(lst, f=0.5):
 #	# build histogram    
 #	h = [0] * 256
@@ -28,14 +31,21 @@ def quantile(lst, f=0.5):
 #		if (sum > targetSum):
 #			return i
 
-
+# Filter function, doesn't process edges
+# Very slow, needs to be improved
 def filter(img):
+
+	# Initialize image arrays
 	src = array.array('B', img.getdata())
 	dst = array.array('B', img.getdata())
 	w,h=img.size
 
+	# Filter radius
 	r = 3
+
 	mask = []
+
+	# Calculate mask values
 	for dy in range(-r, r+1):
 		dx = int(math.sqrt(r*r-dy*dy))
 		for x in range(-dx,dx+1):
@@ -45,13 +55,11 @@ def filter(img):
 
 	pixelsInMask = [0]*len(mask)
 
-#	starttime = time.clock()
 	pixelsProcessed = 0
 
+	# Main processing loop.
+	# Run through image, add pixels to list, calculate median, and store results in second image array
 	for y in range(0+r,h-r):
-#		elapsed = time.clock()-starttime
-#		if elapsed > 0.1 and y % 10 == 0:
-#			print "Applying median filter: %3i / %3i: %0.2f %%; %0.1f p/s\r" % (y, h, (y-r)*100.0/(h-r*2), pixelsProcessed/elapsed)
 		for x in range(0+r,w-r):
 			i = 0
 
@@ -64,7 +72,6 @@ def filter(img):
 
 	imgDest = img.copy()
 	imgDest.putdata(dst)
-	print
 	return imgDest
 
 if __name__ == '__main__':
@@ -72,5 +79,4 @@ if __name__ == '__main__':
 
 def main(img):
 	imgDest = filter(img)
-#	imgDest.save("../out/filter.bmp")
 	return imgDest
