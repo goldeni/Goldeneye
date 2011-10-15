@@ -1,14 +1,15 @@
 import Image
 
 class otsuThresholder:
-	def __init__(self,inputImage):
-		self.t = int(self.otsu(inputImage))
+	def __init__(self,inputImage, pixels):
+		self.t = int(self.otsu(inputImage, pixels))
 
 		lut = [255 if v > int(self.t) else 0 for v in range(256)]
 		self.thresholdImage = inputImage.point(lut)
 
-	def otsu(self,inputImage):
+	def otsu(self,inputImage, pixels):
 		hist = inputImage.histogram()
+		print hist
 
 		dim = inputImage.size
 		total = dim[0]*dim[1]

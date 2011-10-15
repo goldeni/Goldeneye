@@ -20,6 +20,7 @@ class blurredImage:
 
 class thresholdedImage:
 	def __init__(self,inputImage,flag,pixels):
-			self.thresholdImageObject = threshold2.otsuThresholder(inputImage)
+		if flag == 1:
+			self.thresholdImageObject = threshold2.otsuThresholder(inputImage,pixels)
 			self.thresholdImage = self.thresholdImageObject.thresholdImage
 			#self.thr = threshold2.t

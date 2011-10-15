@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import algorithms
 import sys,os,Image
 
