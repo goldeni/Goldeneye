@@ -1,61 +1,45 @@
-#!/usr/bin/python
-import Image, time
+import Image
 
-# Main thresholding function
-def thresh(img):
-	print "Thresholding started"
-	start = time.time()
-	# Ge threshold
-	o = int(otsu(img))
-	# Apply threshold
-	lut = [255 if v > int(o) else 0 for v in range(256)] 
-	thr = img.point(lut)
+class otsuThresholder:
+	def __init__(self,inputImage, pixels):
+		self.t = int(self.otsu(inputImage, pixels))
 
-	print "Thresholding done: time =", (time.time()-start)*1000, "ms"
-	print "Threshold:",o
-	return thr
+		lut = [255 if v > int(self.t) else 0 for v in range(256)]
+		self.thresholdImage = inputImage.point(lut)
 
-# Calculates the optimal threshold using Otsu's Method
-def otsu(img):
-	# Initialize histogram
-	hist = img.histogram()
+	def otsu(self,inputImage, pixels):
+		hist = inputImage.histogram()
+		#print hist
 
-	# Get image size
-	dim = img.size
-	total = dim[0]*dim[1]
+		dim = inputImage.size
+		total = dim[0]*dim[1]
 
-	# Get sum for averaging the intensity
-	sum = 0;
-	for t in range(255):
-		sum += t * hist[t]
+		sum = 0
+		for t in range(255):
+			sum += t * hist[t]
 
-	avg = sum/total
+		avg = sum/total
 
-	# Initialize variables
-	sumB, wB, wF = 0,0,0
-	varMax, threshold = 0,0
+		sumB, wB, wF = 0,0,0
+		varMax, threshold = 0,0
 
-	# Main loop
-	# Runs through all possible thresholds and finds the maximum between-class variance.
-	for t in range(0,int(avg/2)):
-		wB += hist[t]
-		if wB == 0:
-			continue
-		wF = total - wB;
-		if wF == 0:
-			break
+		for t in range(0,int(avg/2)):
+			wB += hist[t]
+			if wB == 0:
+				continue
+			wF = total - wB
+			if wF == 0:
+				break
 
-		sumB += t * hist[t]
+			sumB += t * hist[t]
 
-		mB = sumB / wB
-		mF = (sum - sumB) / wF;
+			mB = sumB/wB
+			mF = (sum - sumB)/wF
 
-		# Calculate between-class variance
-		varBetween = wB * wF * (mB - mF) * (mB - mF)
+			varBetween = wB * wF * (mB - mF) * (mB - mF)
 
-		# Find maximum between-class variance
-		if varBetween > varMax:
-			varMax = varBetween
-			threshold = t
-	
-	return threshold
+			if varBetween > varMax:
+				varMax = varBetween
+				threshold = t
+
+			return threshold

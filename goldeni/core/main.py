@@ -20,6 +20,9 @@ thresholdedImage = thresholdedImageObject.thresholdImage
 #print "Threshold is " + thresholdedImageObject.thr
 thresholdedImage.save("out/thresh-" + name)
 
+CannyHoughObject = algorithms.CannyHough(thresholdedImage)
+print CannyHoughObject.cvSize
+
 
 
 if False:

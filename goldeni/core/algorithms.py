@@ -1,7 +1,7 @@
 import Image
 import cv
 import ImageFilter
-import threshold2
+import threshold
 
 class grayscaledImage:
 	def __init__(self,inputImage):
@@ -21,6 +21,14 @@ class blurredImage:
 class thresholdedImage:
 	def __init__(self,inputImage,flag,pixels):
 		if flag == 1:
-			self.thresholdImageObject = threshold2.otsuThresholder(inputImage,pixels)
+			self.thresholdImageObject = threshold.otsuThresholder(inputImage,pixels)
 			self.thresholdImage = self.thresholdImageObject.thresholdImage
-			#self.thr = threshold2.t
+			#self.thr = threshold.t
+
+class CannyHough:
+	def __init__(self, inputImage):
+		cvImage = cv.CreateImageHeader(inputImage.size, cv.IPL_DEPTH_8U, 3)
+		cv.SetData(cvImage, inputImage.tostring())
+		self.cvSize = cv.GetSize(cvImage)
+		CvSeq* circles = cv.HoughCircles(cvImage,storage,CV_HOUGH_GRADIENT,2,50,200,100);
+		#print circles
