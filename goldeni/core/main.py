@@ -22,6 +22,7 @@ thresholdedImage.save("out/thresh-" + name)
 
 CannyHoughObject = algorithms.CannyHough(thresholdedImage)
 print CannyHoughObject.cvSize
+print CannyHoughObject.storage
 
 
 
