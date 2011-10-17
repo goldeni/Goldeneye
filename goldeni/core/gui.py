@@ -34,14 +34,6 @@ class mainWindow(Tkinter.Tk):
 		self.b1.destroy()
 		self.b2.destroy()
 
-	def processImage(imagePath):
-		newimage.destroy()
-		preImage = main.main(imagePath)
-		processedImage = ImageTk.PhotoImage(preImage)
-		newnewimage = Label(root, image=processedImage)
-		newnewimage.processedImage=processedImage
-		newnewimage.grid(row=0,column=0,columnspan=2,rowspan=2)
-
 		self.title("Iris Processing")
 
 		self.newimage = Tkinter.Label(self, image=loadImage)
