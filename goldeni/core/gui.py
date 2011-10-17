@@ -4,8 +4,6 @@ import Tkinter
 import Image,ImageTk,tkFileDialog,sys,tkMessageBox,cv
 import main
 
-import main
-
 class mainWindow(Tkinter.Tk):
 	def __init__(self,parent):
 		Tkinter.Tk.__init__(self,parent)
@@ -83,7 +81,7 @@ class mainWindow(Tkinter.Tk):
 		self.newimage.grid(row=0,column=0,rowspan=2,columnspan=2)
 
 		self.button = Tkinter.Button(self, text="Process Image",command=lambda i=imgPath: self.processImage(i) ,bg="white")
-		self.button.grid(row=2,column=0,columnspan=2,sicky=Tkinter.S)
+		self.button.grid(row=2,column=0,columnspan=2,sticky=Tkinter.S+Tkinter.N)
 
 	def paraSubmit(self):
 		tkMessageBox.showinfo("Iris Processing", "Test")

@@ -15,7 +15,7 @@ class grayscaledImage:
 
 class blurredImage:
 	def __init__(self,inputImage):
-		self.blurRadius = 13
+		self.blurRadius = 9
 		self.blurImage = inputImage.filter(ImageFilter.MedianFilter(self.blurRadius))
 
 class thresholdedImage:
