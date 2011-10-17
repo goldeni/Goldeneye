@@ -3,30 +3,35 @@
 import algorithms
 import os,Image,cv
 
-def main(path):
-	name = os.path.basename(path)
-	inputImage = Image.open(path)
+class main:
+	def __init__(self,path):
+		name = os.path.basename(path)
+		inputImage = Image.open(path)
 
-	grayImageObject = algorithms.grayscaledImage(inputImage)
-	grayscaleImage = grayImageObject.grayImage
-	grayscaleImage.save("out/gray-" + name)
+		grayImageObject = algorithms.grayscaledImage(inputImage)
+		grayscaleImage = grayImageObject.grayImage
+		grayscaleImage.save("out/gray-" + name)
 
-	blurredImageObject = algorithms.blurredImage(grayscaleImage)
-	blurredImage = blurredImageObject.blurImage
-	blurredImage.save("out/blur-" + name)
+		blurredImageObject = algorithms.blurredImage(grayscaleImage)
+		blurredImage = blurredImageObject.blurImage
+		blurredImage.save("out/blur-" + name)
 
-	thresholdedImageObject = algorithms.thresholdedImage(blurredImage,1,1)
-	thresholdedImage = thresholdedImageObject.thresholdImage
-
-
-	thresholdedImage.save("out/thresh-" + name)
-	return thresholdedImage
+		thresholdedImageObject = algorithms.thresholdedImage(blurredImage,1,1)
+		self.thresholdedImage = thresholdedImageObject.thresholdImage
 
 
-	####Figure this out!!!
-	#CannyHoughObject = algorithms.CannyHough(thresholdedImage)
-	#print CannyHoughObject.cvSize
-	#print CannyHoughObject.storage
+		self.thresholdedImage.save("out/thresh-" + name)
+		#return thresholdedImage
+
+
+		####This is starting to work, but is not yet fully functional.
+		CannyHoughObject = algorithms.CannyHough(self.thresholdedImage)
+		#CannyCircleImage = CannyHoughObject.cvPupil
+		self.xPoint = CannyHoughObject.x
+		self.yPoint = CannyHoughObject.y
+		self.rPoint = CannyHoughObject.r
+		#print CannyHoughObject.cvSize
+		#print CannyHoughObject.storage
 	
 
 

@@ -91,13 +91,29 @@ class mainWindow(Tkinter.Tk):
 		self.title("Iris Processed")
 		self.button.destroy()
 
-		loadImage = ImageTk.PhotoImage(main.main(path))
+		newImageObject = main.main(path)
+		newImage = newImageObject.thresholdedImage
+		centerx = newImageObject.xPoint
+		centery = newImageObject.yPoint
+		radius = newImageObject.rPoint
+
+		loadImage = ImageTk.PhotoImage(newImage)
 		self.newimage = Tkinter.Label(self, image=loadImage)
 		self.newimage.loadImage=loadImage
-		self.newimage.grid(row=0,column=0,rowspan=2,columnspan=2)
-		
+		self.newimage.pack()
+		#self.newimage.grid(row=0,column=0,rowspan=2,columnspan=2)
+
+		pupilCenter = Tkinter.Label(self, text="Center: " + str(centerx) + "," + str(centery),bg="white")
+		pupilCenter.pack()
+		#pupilCenter.grid(row=2,column=0,columnspan=2)
+
+		pupilRadius = Tkinter.Label(self, text="Radius: " + str(radius),bg="white")
+		pupilRadius.pack()
+		#pupilCenter.grid(row=3,column=0,columnspan=2)	
+
 		self.button = Tkinter.Button(self, text="Close",command=self.quit ,bg="white")
-		self.button.grid(row=2,column=0,columnspan=2)
+		self.button.pack()
+		#self.button.grid(row=4,column=0,columnspan=2)
 
 	def initialize(self):
 		self.grid()

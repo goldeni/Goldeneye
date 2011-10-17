@@ -18,6 +18,7 @@ class blurredImage:
 		self.blurRadius = 9
 		self.blurImage = inputImage.filter(ImageFilter.MedianFilter(self.blurRadius))
 
+# Will probably not need pixel objects. Just ignore thresholds <= the first Otsu result
 class thresholdedImage:
 	def __init__(self,inputImage,flag,pixels):
 		if flag == 1:
@@ -25,6 +26,7 @@ class thresholdedImage:
 			self.thresholdImage = self.thresholdImageObject.thresholdImage
 			#self.thr = threshold.t
 
+# Starting to behave, should be running soon
 class CannyHough:
 	def __init__(self, inputImage):
 		cvImage = cv.CreateImageHeader(inputImage.size, cv.IPL_DEPTH_8U, 1)
@@ -36,9 +38,6 @@ class CannyHough:
 		self.storage = cv.CreateMat(50, 1, cv.CV_32FC3)
 
 		#Fix this stuff
-		circles = cv.HoughCircles(cvImage,self.storage,cv.CV_HOUGH_GRADIENT,1,25,60,30,0,200);
+		circles = cv.HoughCircles(cvImage,self.storage,cv.CV_HOUGH_GRADIENT,3,25,200,100,25,60);
 
-		for (x, y, radius) in circles:
-			print x + "\n"
-			print y + "\n"
-			print radius + "\n"
+		(self.x,self.y,self.r) = self.storage[0,0]
