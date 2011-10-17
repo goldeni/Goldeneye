@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import algorithms
-import os,Image
+import os,Image,cv
 
 def main(path):
 	name = os.path.basename(path)
@@ -18,10 +18,17 @@ def main(path):
 	thresholdedImageObject = algorithms.thresholdedImage(blurredImage,1,1)
 	thresholdedImage = thresholdedImageObject.thresholdImage
 
-	#print "Threshold is " + thresholdedImageObject.thr
+
+	##########print "Threshold is " + thresholdedImageObject.thr
 	thresholdedImage.save("out/thresh-" + name)
 	return thresholdedImage
+
 
 	#CannyHoughObject = algorithms.CannyHough(thresholdedImage)
 	#print CannyHoughObject.cvSize
 	#print CannyHoughObject.storage
+	
+
+
+
+

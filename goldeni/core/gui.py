@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 import Tkinter
-import Image,ImageTk,tkFileDialog,sys,tkMessageBox
+import Image,ImageTk,tkFileDialog,sys,tkMessageBox,cv
+import main
 
 import main
 
@@ -32,6 +33,14 @@ class mainWindow(Tkinter.Tk):
 		self.background.destroy()
 		self.b1.destroy()
 		self.b2.destroy()
+
+	def processImage(imagePath):
+		newimage.destroy()
+		preImage = main.main(imagePath)
+		processedImage = ImageTk.PhotoImage(preImage)
+		newnewimage = Label(root, image=processedImage)
+		newnewimage.processedImage=processedImage
+		newnewimage.grid(row=0,column=0,columnspan=2,rowspan=2)
 
 		self.title("Iris Processing")
 
@@ -88,9 +97,9 @@ class mainWindow(Tkinter.Tk):
 		self.b1 = Tkinter.Button(self, text="Load Image", command=self.loadImage,bg="white")
 		self.b1.grid(row=3,column=0)
 
-
 		self.b2 = Tkinter.Button(self, text="Search for Record", command=self.searchRecord,bg="white")
 		self.b2.grid(row=3,column=1)
+
 
 if __name__ == "__main__":
 	root = mainWindow(None)
