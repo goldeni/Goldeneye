@@ -1,7 +1,12 @@
 #!/usr/bin/python
 
+<<<<<<< HEAD
+from Tkinter import *
+import Image,ImageTk,tkFileDialog,sys,tkMessageBox,cv
+=======
 import Tkinter
 import Image,ImageTk,tkFileDialog,sys,tkMessageBox
+>>>>>>> exp
 import main
 
 ####### Definition buttons CMDs ###########
@@ -17,6 +22,38 @@ class mainWindow(Tkinter.Tk):
 		cpara.title("Change Parameters")
 		cpara.geometry('250x250+0+0')
 
+<<<<<<< HEAD
+        #limage = Toplevel()
+        #limage.title("Iris Processing")
+        #limage.geometry('400x400+0+0')
+
+	############################################
+	#Test code here
+	b1.destroy()
+	b2.destroy()
+	newimage = Label(root, image=loadImage)
+	newimage.loadImage=loadImage
+	newimage.grid(row=0,column=0,columnspan=2,rowspan=2)
+	root.title("Iris Processing")
+	root.geometry('400x400+0+0')
+	############################################
+
+	#newimage = Label(limage, image=loadImage)
+	#newimage.loadImage=loadImage
+	#newimage.pack()
+
+        button = Button(root, text="Process Image",command=lambda i=imgPath: processImage(i),bg="white")
+	button.grid(row=2,column=0,columnspan=2)
+
+	# This is a really bad practice... but it works so whatever
+	def processImage(imagePath):
+		newimage.destroy()
+		preImage = main.main(imagePath)
+		processedImage = ImageTk.PhotoImage(preImage)
+		newnewimage = Label(root, image=processedImage)
+		newnewimage.processedImage=processedImage
+		newnewimage.grid(row=0,column=0,columnspan=2,rowspan=2)
+=======
 		L1 = Tkinter.Label(cpara, text="Hamming Distance:",bg="white")
 		L1.pack()
 		E1 = Tkinter.Entry(cpara, bd=2)
@@ -39,6 +76,7 @@ class mainWindow(Tkinter.Tk):
 
 		button = Tkinter.Button(cpara, text="Submit", command=self.paraSubmit)
 		button.pack(side = BOTTOM)
+>>>>>>> exp
 
 	def aboutProj(self):
 		aproj = Tkinter.Toplevel(bg="white")
@@ -84,9 +122,15 @@ class mainWindow(Tkinter.Tk):
 	def initialize(self):
 		self.grid()
 
+<<<<<<< HEAD
+Background = PhotoImage(file="images/1.gif")
+root.geometry("220x220+0+0")
+#panel1 = Label(root,image=Background,bg="black").pack()
+=======
 		self.backImage = ImageTk.PhotoImage(file="images/1.gif")
 		self.background = Tkinter.Label(self,image=self.backImage,bg="black")
 		self.background.grid(row=0,column=0,columnspan=2,rowspan=2)
+>>>>>>> exp
 
 		self.grid_columnconfigure(0,weight=1)
 		self.resizable(True,False)
@@ -108,9 +152,33 @@ class mainWindow(Tkinter.Tk):
 		self.b1 = Tkinter.Button(self, text="Load Image", command=self.loadImage,bg="white")
 		self.b1.grid(row=3,column=0)
 
+<<<<<<< HEAD
+b1 = Button(root, text="Load Image", command=loadImage,bg="white")
+b1.grid(row=0,column=0)
+
+b2 = Button(root, text="Search for Record", command=searchRecord,bg="white")
+b2.grid(row=0,column=1)
+
+##############################################
+
+if len(sys.argv) == 1:
+        w = Label(root, text=" ")
+
+elif len(sys.argv) == 2:
+        imgPath = sys.argv[1]
+        panelImage = ImageTk.PhotoImage(file=imgPath)
+        w = Label(root, image=panelImage)
+else:
+        print "Error: Too many arguments"
+
+w.grid(row=0,column=0)
+
+root.mainloop()
+=======
 		self.b2 = Tkinter.Button(self, text="Search for Record", command=self.searchRecord,bg="white")
 		self.b2.grid(row=3,column=1)
 
+>>>>>>> exp
 
 if __name__ == "__main__":
 	root = mainWindow(None)
