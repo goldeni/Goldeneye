@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 from Tkinter import *
-import Image,ImageTk,tkFileDialog,sys,tkMessageBox,main
+import Image,ImageTk,tkFileDialog,sys,tkMessageBox,cv
+import main
 
 ####### Definition buttons CMDs ###########
 
@@ -13,21 +14,36 @@ def loadImage():
         loadImage = ImageTk.PhotoImage(file=imgPath)
         print imgPath,loadImage
 
-	w.destroy()
+        #limage = Toplevel()
+        #limage.title("Iris Processing")
+        #limage.geometry('400x400+0+0')
 
-        limage = Toplevel()
-        limage.title("Iris Processing")
-        limage.geometry('250x250+0+0')
-
-	newimage = Label(limage, image=loadImage)
+	############################################
+	#Test code here
+	b1.destroy()
+	b2.destroy()
+	newimage = Label(root, image=loadImage)
 	newimage.loadImage=loadImage
-	newimage.pack()
+	newimage.grid(row=0,column=0,columnspan=2,rowspan=2)
+	root.title("Iris Processing")
+	root.geometry('400x400+0+0')
+	############################################
 
-        button = Button(limage, text="Process Image",command=processImage,bg="white")
-	button.pack(side = BOTTOM)
+	#newimage = Label(limage, image=loadImage)
+	#newimage.loadImage=loadImage
+	#newimage.pack()
 
-def processImage():
-        tkMessageBox.showinfo("Iris Processing", "Test")
+        button = Button(root, text="Process Image",command=lambda i=imgPath: processImage(i),bg="white")
+	button.grid(row=2,column=0,columnspan=2)
+
+	# This is a really bad practice... but it works so whatever
+	def processImage(imagePath):
+		newimage.destroy()
+		preImage = main.main(imagePath)
+		processedImage = ImageTk.PhotoImage(preImage)
+		newnewimage = Label(root, image=processedImage)
+		newnewimage.processedImage=processedImage
+		newnewimage.grid(row=0,column=0,columnspan=2,rowspan=2)
 
 def changePara():
         cpara = Toplevel(bg="white")
@@ -78,7 +94,7 @@ root.title("Healthcare Iris Biometric Scanner")
 
 Background = PhotoImage(file="images/1.gif")
 root.geometry("220x220+0+0")
-panel1 = Label(root,image=Background,bg="black").pack()
+#panel1 = Label(root,image=Background,bg="black").pack()
 
 ######## Menu Creation #######################
 
@@ -99,10 +115,10 @@ root.config(menu=menubar)
 ######## Button Creation #####################
 
 b1 = Button(root, text="Load Image", command=loadImage,bg="white")
-b1.pack(side = LEFT)
+b1.grid(row=0,column=0)
 
 b2 = Button(root, text="Search for Record", command=searchRecord,bg="white")
-b2.pack(side = RIGHT)
+b2.grid(row=0,column=1)
 
 ##############################################
 
@@ -116,7 +132,7 @@ elif len(sys.argv) == 2:
 else:
         print "Error: Too many arguments"
 
-w.pack()
+w.grid(row=0,column=0)
 
 root.mainloop()
 
