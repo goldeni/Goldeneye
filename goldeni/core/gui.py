@@ -12,6 +12,9 @@ class mainWindow(Tkinter.Tk):
 		self.parent=parent
 		self.initialize()
 
+	def passFunction(self):
+		pass
+
 	def changePara(self):
 		cpara = Tkinter.Toplevel(bg="white")
 		cpara.title("Advanced Configuration Options")
@@ -48,6 +51,15 @@ class mainWindow(Tkinter.Tk):
 		query.title("Input IrisCode")
 		query.geometry('250x250+0+0')
 
+		queryLabel = Tkinter.Label(query, text="Input IrisCode ",bg="white")
+		queryLabel.pack()
+		queryEntry = Tkinter.Entry(query, bd=2)
+		queryEntry.pack()
+
+		button = Tkinter.Button(query, text="Query", command=self.passFunction)
+       		button.pack(side = Tkinter.BOTTOM)
+
+
 	def aboutProj(self):
 		aproj = Tkinter.Toplevel(bg="white")
 		aproj.title("Project Goldeneye")
@@ -57,7 +69,7 @@ class mainWindow(Tkinter.Tk):
 		Tkinter.Label(aproj,text=message,bg="white").pack()
 
 	def loadImage(self):
-		imgPath = tkFileDialog.askopenfilename(filetypes=[("all files","*"),("images","*.py")])
+		imgPath = tkFileDialog.askopenfilename()
 		loadImage = ImageTk.PhotoImage(file=imgPath)
 
 		self.background.destroy()
@@ -71,13 +83,10 @@ class mainWindow(Tkinter.Tk):
 		self.newimage.grid(row=0,column=0,rowspan=2,columnspan=2)
 
 		self.button = Tkinter.Button(self, text="Process Image",command=lambda i=imgPath: self.processImage(i) ,bg="white")
-		self.button.grid(row=2,column=0,columnspan=2)
+		self.button.grid(row=2,column=0,columnspan=2,sicky=Tkinter.S)
 
 	def paraSubmit(self):
 		tkMessageBox.showinfo("Iris Processing", "Test")
-
-	def searchRecord(self):
-		tkMessageBox.showinfo("SEARCHING...", "RECORD")
 
 	def processImage(self,path):
 		self.newimage.destroy()
@@ -117,14 +126,14 @@ class mainWindow(Tkinter.Tk):
 		self.config(menu=menubar)
 
 		self.b1 = Tkinter.Button(self, text="Load Image", command=self.loadImage,bg="white")
-		self.b1.grid(row=3,column=0)
+		self.b1.grid(row=3,column=0, sticky=Tkinter.W+Tkinter.E)
 
-		self.b2 = Tkinter.Button(self, text="Search for Record", command=self.searchRecord,bg="white")
-		self.b2.grid(row=3,column=1)
+		self.b2 = Tkinter.Button(self, text="Search for Record", command=self.queryDatabase,bg="white")
+		self.b2.grid(row=3,column=1, sticky=Tkinter.W+Tkinter.E)
 
 
 if __name__ == "__main__":
 	root = mainWindow(None)
-	root.title("Healthcare Iris Biometric Scanner")
+	root.title("Goldeneye Iris Scanner")
 	root.mainloop()
 
