@@ -14,9 +14,39 @@ class mainWindow(Tkinter.Tk):
 
 	def changePara(self):
 		cpara = Tkinter.Toplevel(bg="white")
-		cpara.title("Change Parameters")
+		cpara.title("Advanced Configuration Options")
 		cpara.geometry('250x250+0+0')
 
+		#### Use arrays ####
+		L1 = Tkinter.Label(cpara, text="Hamming Distance: ",bg="white")
+		L1.pack()
+		E1 = Tkinter.Entry(cpara, bd=2)
+		E1.pack()
+
+		L2 = Tkinter.Label(cpara, text="Median Filter Radius: ",bg="white")
+		L2.pack()
+		E2 = Tkinter.Entry(cpara, bd=2)
+		E2.pack()
+
+		L3 = Tkinter.Label(cpara, text="Hough Transform Option",bg="white")
+		L3.pack()
+		E3 = Tkinter.Entry(cpara, bd=2)
+		E3.pack()
+
+		L2 = Tkinter.Label(cpara, text="Unspecified Parameter",bg="white")
+		L2.pack()
+		E2 = Tkinter.Entry(cpara, bd=2)
+		E2.pack()
+		###################
+		
+
+        	button = Tkinter.Button(cpara, text="Submit", command=self.paraSubmit)
+       		button.pack(side = Tkinter.BOTTOM)
+
+	def queryDatabase(self):
+		query = Tkinter.Toplevel(bg="white")
+		query.title("Input IrisCode")
+		query.geometry('250x250+0+0')
 
 	def aboutProj(self):
 		aproj = Tkinter.Toplevel(bg="white")
@@ -27,7 +57,7 @@ class mainWindow(Tkinter.Tk):
 		Tkinter.Label(aproj,text=message,bg="white").pack()
 
 	def loadImage(self):
-		imgPath = tkFileDialog.askopenfilename()
+		imgPath = tkFileDialog.askopenfilename(filetypes=[("all files","*"),("images","*.py")])
 		loadImage = ImageTk.PhotoImage(file=imgPath)
 
 		self.background.destroy()
@@ -70,7 +100,7 @@ class mainWindow(Tkinter.Tk):
 		self.background.grid(row=0,column=0,columnspan=2,rowspan=2)
 
 		self.grid_columnconfigure(0,weight=1)
-		self.resizable(True,False)
+		#self.resizable(True,False)
 
 		menubar=Tkinter.Menu(self)
 		filemenu = Tkinter.Menu(menubar,tearoff=0)

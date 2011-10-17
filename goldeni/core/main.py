@@ -19,11 +19,11 @@ def main(path):
 	thresholdedImage = thresholdedImageObject.thresholdImage
 
 
-	##########print "Threshold is " + thresholdedImageObject.thr
 	thresholdedImage.save("out/thresh-" + name)
 	return thresholdedImage
 
 
+	####Figure this out!!!
 	#CannyHoughObject = algorithms.CannyHough(thresholdedImage)
 	#print CannyHoughObject.cvSize
 	#print CannyHoughObject.storage

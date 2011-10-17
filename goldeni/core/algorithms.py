@@ -35,8 +35,8 @@ class CannyHough:
 
 		self.storage = cv.CreateMat(50, 1, cv.CV_32FC3)
 
-		#Fix this shit
-		circles = cv.HoughCircles(cvImage,self.storage,cv.CV_HOUGH_GRADIENT,2,(self.cvSize[0])/4,100,50,0,200);
+		#Fix this stuff
+		circles = cv.HoughCircles(cvImage,self.storage,cv.CV_HOUGH_GRADIENT,1,25,60,30,0,200);
 
 		for (x, y, radius) in circles:
 			print x + "\n"
