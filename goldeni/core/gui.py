@@ -1,10 +1,19 @@
 #!/usr/bin/python
 
+"""
+The main graphical interface module. Create an instance of this to start the GUI.
+"""
+
 #test
 import Tkinter
-import Image,ImageTk,tkFileDialog,sys,tkMessageBox,cv
+import Image
+import ImageTk
+import tkFileDialog
+import sys
+import tkMessageBox,cv
 import main
 
+# Add exception handling for all functions.
 class mainWindow(Tkinter.Tk):
 	def __init__(self,parent):
 		Tkinter.Tk.__init__(self,parent)
@@ -14,28 +23,31 @@ class mainWindow(Tkinter.Tk):
 	def passFunction(self):
 		pass
 
+	#Make label contents visible by all. Possibly make settings module
 	def changePara(self):
 		cpara = Tkinter.Toplevel(bg="white")
 		cpara.title("Advanced Configuration Options")
 		cpara.geometry('250x250+0+0')
 
+		L1var = StringVar()
+
 		#### Use arrays ####
-		L1 = Tkinter.Label(cpara, text="Hamming Distance: ",bg="white")
+		L1 = Tkinter.Label(cpara, text="Hamming Distance: ",bg="white",textvariable=L1var)
 		L1.pack()
 		E1 = Tkinter.Entry(cpara, bd=2)
 		E1.pack()
 
-		L2 = Tkinter.Label(cpara, text="Median Filter Radius: ",bg="white")
+		L2 = Tkinter.Label(cpara, text="Initial Median Filter Radius: ",bg="white")
 		L2.pack()
 		E2 = Tkinter.Entry(cpara, bd=2)
 		E2.pack()
 
-		L3 = Tkinter.Label(cpara, text="Hough Transform Option",bg="white")
+		L3 = Tkinter.Label(cpara, text="",bg="white")
 		L3.pack()
 		E3 = Tkinter.Entry(cpara, bd=2)
 		E3.pack()
 
-		L2 = Tkinter.Label(cpara, text="Unspecified Parameter",bg="white")
+		L2 = Tkinter.Label(cpara, text="Hough Transform Option",bg="white")
 		L2.pack()
 		E2 = Tkinter.Entry(cpara, bd=2)
 		E2.pack()
@@ -68,8 +80,16 @@ class mainWindow(Tkinter.Tk):
 		Tkinter.Label(aproj,text=message,bg="white").pack()
 
 	def loadImage(self):
-		imgPath = tkFileDialog.askopenfilename()
-		loadImage = ImageTk.PhotoImage(file=imgPath)
+		while 1:
+			try:
+				imgPath = tkFileDialog.askopenfilename()
+				loadImage = ImageTk.PhotoImage(file=imgPath)
+			except IOError:
+				fileString = " is not a valid PIL image file."
+				tkMessageBox.showwarning("Not an image",
+							 imgPath + fileString)
+			else:
+				break
 
 		self.background.destroy()
 		self.b1.destroy()
@@ -140,15 +160,16 @@ class mainWindow(Tkinter.Tk):
 
 		self.config(menu=menubar)
 
-		self.b1 = Tkinter.Button(self, text="Load Image", command=self.loadImage,bg="white")
+		self.b1 = Tkinter.Button(self, text="Load Image", command=self.loadImage)
 		self.b1.grid(row=3,column=0, sticky=Tkinter.W+Tkinter.E)
 
-		self.b2 = Tkinter.Button(self, text="Search for Record", command=self.queryDatabase,bg="white")
+		self.b2 = Tkinter.Button(self, text="Search for Record", command=self.queryDatabase)
 		self.b2.grid(row=3,column=1, sticky=Tkinter.W+Tkinter.E)
 
 
 if __name__ == "__main__":
 	root = mainWindow(None)
 	root.title("Goldeneye Iris Scanner")
+	root.geometry('+0+0')
 	root.mainloop()
 
