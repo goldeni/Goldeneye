@@ -1,7 +1,9 @@
 #!/usr/bin/python
 
 import algorithms
-import os,Image,cv
+import os
+import Image
+import cv
 
 class main:
 	def __init__(self,path):
@@ -16,15 +18,16 @@ class main:
 		blurredImage = blurredImageObject.blurImage
 		blurredImage.save("out/blur-" + name)
 
-		thresholdedImageObject = algorithms.thresholdedImage(blurredImage,1,1)
+		thresholdedImageObject = algorithms.thresholdedImage(blurredImage,0)
 		self.thresholdedImage = thresholdedImageObject.thresholdImage
+		self.pupilThreshold = thresholdedImageObject.thr
+		print "Threshold is %s" % self.pupilThreshold
 
 
 		self.thresholdedImage.save("out/thresh-" + name)
 		#return thresholdedImage
 
 
-		####This is starting to work, but is not yet fully functional.
 		CannyHoughObject = algorithms.CannyHough(self.thresholdedImage)
 		#CannyCircleImage = CannyHoughObject.cvPupil
 		self.xPoint = CannyHoughObject.x
@@ -33,7 +36,11 @@ class main:
 		#print CannyHoughObject.cvSize
 		#print CannyHoughObject.storage
 	
-
+		###Test for iris boundary detection###
+		thresholded2ImageObject = algorithms.thresholdedImage(blurredImage,self.pupilThreshold+2)
+		self.thresholded2Image = thresholded2ImageObject.thresholdImage
+		print "Threshold is %s" % thresholded2ImageObject.thr
+		self.thresholded2Image.save("out/thresh2-" + name)
 
 
 

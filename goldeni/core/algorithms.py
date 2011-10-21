@@ -35,20 +35,19 @@ class blurredImage:
 
 
 class thresholdedImage:
-# Will probably not need pixel objects. Just ignore thresholds <= the first Otsu result.
-# Fix variable names.
-	def __init__(self,inputImage,flag,pixels):
+	# Will probably not need pixel objects. Just ignore thresholds <= the first Otsu result.
+	# Fix variable names.
+	def __init__(self,inputImage,controlThreshold):
 		"""
 		Constructor for thresholdedImage. Performs Otsu thresholding.
 		"""
-		if flag == 1:
-			self.thresholdImageObject = threshold.otsuThresholder(inputImage,pixels)
-			self.thresholdImage = self.thresholdImageObject.thresholdImage
-			#self.thr = threshold.t
+		self.thresholdImageObject = threshold.otsuThresholder(inputImage, controlThreshold)
+		self.thresholdImage = self.thresholdImageObject.thresholdImage
+		self.thr = self.thresholdImageObject.t
 
 class CannyHough:
-# Write functions to intelligently tweak parameters. Create flag network to notify this function.
-# Throw exceptions for undetected circles
+	# Write functions to intelligently tweak parameters. Create flag network to notify this function.
+	# Throw exceptions for undetected circles
 	def __init__(self, inputImage):
 		"""
 		Perform Canny edge detection, then a circular Hough transform
