@@ -1,75 +1,101 @@
 #!/usr/bin/python
 
-"""
-The main graphical interface module. Create an instance of this to start the GUI.
-"""
-
 #test
 import Tkinter
-import Image
-import ImageTk
-import tkFileDialog
-import sys
-import tkMessageBox,cv
+import Image,ImageTk,tkFileDialog,sys,tkMessageBox,cv
 import main
+from Tkinter import *
 
-# Add exception handling for all functions.
 class mainWindow(Tkinter.Tk):
 	def __init__(self,parent):
 		Tkinter.Tk.__init__(self,parent)
 		self.parent=parent
 		self.initialize()
 
-	def passFunction(self):
-		pass
-
-	#Make label contents visible by all. Possibly make settings module
 	def changePara(self):
-		cpara = Tkinter.Toplevel(bg="white")
+		cpara = Tkinter.Toplevel()
 		cpara.title("Advanced Configuration Options")
-		cpara.geometry('250x250+0+0')
-
-		L1var = StringVar()
+		cpara.geometry('400x140+0+0')
 
 		#### Use arrays ####
-		L1 = Tkinter.Label(cpara, text="Hamming Distance: ",bg="white",textvariable=L1var)
-		L1.pack()
+		L1 = Tkinter.Label(cpara, text="Hamming Distance:")
+		L1.grid(sticky=E)
 		E1 = Tkinter.Entry(cpara, bd=2)
-		E1.pack()
+		E1.grid(row=0, column=1)
+		D1 = Tkinter.Label(cpara, text="(0.45)")
+		D1.grid(row=0, column=3)
 
-		L2 = Tkinter.Label(cpara, text="Initial Median Filter Radius: ",bg="white")
-		L2.pack()
+		L2 = Tkinter.Label(cpara, text="Median Filter Radius:")
+		L2.grid(sticky=E)
 		E2 = Tkinter.Entry(cpara, bd=2)
-		E2.pack()
+		E2.grid(row=1, column=1)
+		D2 = Tkinter.Label(cpara, text="(???)")
+                D2.grid(row=1, column=3)
 
-		L3 = Tkinter.Label(cpara, text="",bg="white")
-		L3.pack()
+		L3 = Tkinter.Label(cpara, text="Hough Transform Option:")
+		L3.grid(sticky=E)
 		E3 = Tkinter.Entry(cpara, bd=2)
-		E3.pack()
+		E3.grid(row=2, column=1)
+		D3 = Tkinter.Label(cpara, text="(???)")
+                D3.grid(row=2, column=3)
 
-		L2 = Tkinter.Label(cpara, text="Hough Transform Option",bg="white")
-		L2.pack()
-		E2 = Tkinter.Entry(cpara, bd=2)
-		E2.pack()
-		###################
-		
+		L4 = Tkinter.Label(cpara, text="Unspecified Parameter:")
+		L4.grid(sticky=E)
+		E4 = Tkinter.Entry(cpara, bd=2)
+		E4.grid(row=3, column=1)
+		D4 = Tkinter.Label(cpara, text="(???)")
+                D4.grid(row=3, column=3)
 
-        	button = Tkinter.Button(cpara, text="Submit", command=self.paraSubmit)
-       		button.pack(side = Tkinter.BOTTOM)
+        	button = Tkinter.Button(cpara, text="Submit", command=self.paraSubmit,bg="white")
+       		button.grid(row=6, column=1, pady=10)
 
 	def queryDatabase(self):
-		query = Tkinter.Toplevel(bg="white")
-		query.title("Input IrisCode")
-		query.geometry('250x250+0+0')
+		query = Tkinter.Toplevel()
+		query.title("Patient Information")
+		query.geometry('250x180+0+0')
 
-		queryLabel = Tkinter.Label(query, text="Input IrisCode ",bg="white")
-		queryLabel.pack()
-		queryEntry = Tkinter.Entry(query, bd=2)
-		queryEntry.pack()
+		QL1 = Tkinter.Label(query, text="First Name:")
+		QL1.grid(sticky=E)
+		QE1 = Tkinter.Entry(query, bd=2)
+		QE1.grid(row=0, column=1)
 
-		button = Tkinter.Button(query, text="Query", command=self.passFunction)
-       		button.pack(side = Tkinter.BOTTOM)
+		QL2 = Tkinter.Label(query, text="Last Name:")
+                QL2.grid(sticky=E)
+                QE2 = Tkinter.Entry(query, bd=2)
+                QE2.grid(row=1, column=1)
 
+		QL3 = Tkinter.Label(query, text="SSN:")
+                QL3.grid(sticky=E)
+                QE3 = Tkinter.Entry(query, bd=2)
+                QE3.grid(row=2, column=1)
+
+		self.btype = StringVar(query)
+		self.btype.set("A")
+		
+		QL4 = Tkinter.Label(query, text="Blood type:")
+		QL4.grid(sticky=E)
+		QE4 = Tkinter.OptionMenu(query, self.btype, "A", "B", "AB", "O")
+                QE4.config(bg="white")
+		QE4.grid(row=3, column=1, sticky=W)
+
+		self.gender = StringVar(query)
+		self.gender.set("Male")		
+
+		QL5 = Tkinter.Label(query, text="Gender:")
+                QL5.grid(sticky=E)
+                QE5 = Tkinter.OptionMenu(query, self.gender, "Male", "Female")
+		QE5.config(bg="white")
+                QE5.grid(row=4, column=1, sticky=W)
+
+		button = Tkinter.Button(query, text="Query", command=self.passFunction,bg="white")
+       		button.grid(row=8, column=1, pady=10)
+
+	def passFunction(self):
+                func = Tkinter.Toplevel()
+                func.title("Patient Record")
+                func.geometry('400x400+0+0')
+		
+		#query.destroy()
 
 	def aboutProj(self):
 		aproj = Tkinter.Toplevel(bg="white")
@@ -160,10 +186,10 @@ class mainWindow(Tkinter.Tk):
 
 		self.config(menu=menubar)
 
-		self.b1 = Tkinter.Button(self, text="Load Image", command=self.loadImage)
+		self.b1 = Tkinter.Button(self, text="Load Image", command=self.loadImage,bg="white")
 		self.b1.grid(row=3,column=0, sticky=Tkinter.W+Tkinter.E)
 
-		self.b2 = Tkinter.Button(self, text="Search for Record", command=self.queryDatabase)
+		self.b2 = Tkinter.Button(self, text="Search for Record", command=self.queryDatabase,bg="white")
 		self.b2.grid(row=3,column=1, sticky=Tkinter.W+Tkinter.E)
 
 

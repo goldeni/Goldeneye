@@ -24,7 +24,7 @@ class grayscaledImage:
 		return img.convert('L')
 
 class blurredImage:
-	#Implement flag structure to reprocess is blur isn't enough.
+	#Implement flag structure to reprocess if blur isn't enough.
 	#Make blur dependent on size of image and flag. Develop function to calculate.
 	def __init__(self,inputImage):
 		"""
@@ -53,15 +53,64 @@ class CannyHough:
 		Perform Canny edge detection, then a circular Hough transform
 		to detect pupil and iris boudaries.
 		"""
+		#Hough transform variables
+		cv_method = cv.CV_HOUGH_GRADIENT
+		acc_res = 3
+		dmin = 15
+		canny = 50
+		votes = 200
+		#make these dependent on image size
+		rmin = 35
+		rmax = 40
+		
 		cvImage = cv.CreateImageHeader(inputImage.size, cv.IPL_DEPTH_8U, 1)
 		cv.SetData(cvImage, inputImage.tostring())
 		self.cvSize = cv.GetSize(cvImage)
 
-		cv.SaveImage("out/xyz.jpg",cvImage)
 
+		# Create circle storage data structure
 		self.storage = cv.CreateMat(50, 1, cv.CV_32FC3)
+		print "test"
 
-		#Fix this stuff
-		circles = cv.HoughCircles(cvImage,self.storage,cv.CV_HOUGH_GRADIENT,3,25,200,100,25,60);
+		circleList = []		
 
-		(self.x,self.y,self.r) = self.storage[0,0]
+		# Main hough loop
+		while 1:
+			circles = cv.HoughCircles(cvImage,self.storage,cv_method,acc_res,dmin,canny,votes,rmin,rmax);
+			print "Rows: ", self.storage.rows
+			print "CircleList: ",circleList
+			if self.storage.rows >= 1:
+				for i in range(self.storage.rows):
+					a = self.storage[i,0]
+					(x,y,r)=a
+					circleList.append([x,y,r])
+			
+			if len(circleList) < 10:
+				self.storage = cv.CreateMat(50, 1, cv.CV_32FC3)
+				rmin += 5
+				rmax += 5
+				if rmax >= inputImage.size[0]/4:
+					rmin = 35
+					rmax = 40
+					if votes - 20 <= 0:
+						acc_res+=.25
+						break
+					votes -= 20
+				print "rmin - " + str(rmin)
+				print "rmax - " + str(rmax)
+				print "votes - " + str(votes)
+				print "No circles found, retrying"
+				continue
+			else:
+				break
+		print "Storage"
+		print self.storage.rows
+		rad=0
+		ind=0
+		for i in range(len(circleList)):
+			a = circleList[i]
+			if a[2] > rad:
+				rad=a[2]
+				ind=i
+		circ = circleList[ind]
+		(self.x,self.y,self.r) = (circ[0],circ[1],circ[2])
