@@ -225,8 +225,8 @@ class mainWindow(Tkinter.Tk):
 		self.button2.pack(side=LEFT)
 
 	def mainmenu(self):
-		self.newimage.destroy()
 		self.pupilCenter.destroy()
+		self.newimage.destroy()
 		self.pupilRadius.destroy()
 		self.button.destroy()
 		self.button2.destroy()

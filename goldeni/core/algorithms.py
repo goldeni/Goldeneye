@@ -37,18 +37,18 @@ class blurredImage:
 class thresholdedImage:
 	# Will probably not need pixel objects. Just ignore thresholds <= the first Otsu result.
 	# Fix variable names.
-	def __init__(self,inputImage,controlThreshold):
+	def __init__(self,inputImage,tmin,tmax):
 		"""
 		Constructor for thresholdedImage. Performs Otsu thresholding.
 		"""
-		self.thresholdImageObject = threshold.otsuThresholder(inputImage, controlThreshold)
+		self.thresholdImageObject = threshold.otsuThresholder(inputImage,tmin,tmax)
 		self.thresholdImage = self.thresholdImageObject.thresholdImage
 		self.thr = self.thresholdImageObject.t
 
 class CannyHough:
 	# Write functions to intelligently tweak parameters. Create flag network to notify this function.
 	# Throw exceptions for undetected circles
-	def __init__(self, inputImage):
+	def __init__(self, inputImage, radmin):
 		"""
 		Perform Canny edge detection, then a circular Hough transform
 		to detect pupil and iris boudaries.
@@ -58,9 +58,9 @@ class CannyHough:
 		acc_res = 3
 		dmin = 15
 		canny = 50
-		votes = 200
+		votes = 100
 		#make these dependent on image size
-		rmin = 35
+		rmin = radmin
 		rmax = 40
 		
 		cvImage = cv.CreateImageHeader(inputImage.size, cv.IPL_DEPTH_8U, 1)
@@ -85,7 +85,7 @@ class CannyHough:
 					(x,y,r)=a
 					circleList.append([x,y,r])
 			
-			if len(circleList) < 10:
+			if len(circleList) < 4:
 				self.storage = cv.CreateMat(50, 1, cv.CV_32FC3)
 				rmin += 5
 				rmax += 5
@@ -93,7 +93,6 @@ class CannyHough:
 					rmin = 35
 					rmax = 40
 					if votes - 20 <= 0:
-						acc_res+=.25
 						break
 					votes -= 20
 				print "rmin - " + str(rmin)
@@ -107,6 +106,7 @@ class CannyHough:
 		print self.storage.rows
 		rad=0
 		ind=0
+		#Find largest (for iris, find closest to pupil center)
 		for i in range(len(circleList)):
 			a = circleList[i]
 			if a[2] > rad:
