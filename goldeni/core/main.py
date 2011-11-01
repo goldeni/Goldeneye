@@ -36,13 +36,24 @@ class main:
 		#blurredImage.save("out/blur-" + name)
 
 		# Threshold to find pupil
-		thresholdedImageObject = algorithms.thresholdedImage(blurredImage,0,70)
-		self.thresholdedImage = thresholdedImageObject.thresholdImage
-		self.pupilThreshold = thresholdedImageObject.thr
-		print "Threshold is %s" % self.pupilThreshold
+		##thresholdedImageObject = algorithms.thresholdedImage(blurredImage,0,70)
+		##self.thresholdedImage = thresholdedImageObject.thresholdImage
+		##self.pupilThreshold = thresholdedImageObject.thr
+		##print "Threshold is %s" % self.pupilThreshold
 
+		### New thresholding technique. Abstract to class or function in algorithms
+		hist = blurredImage.histogram()
+		pupilMax = -1
+		pupilMaxIndex = -1
+		for t in range(0,70):
+			if hist[t] > pupilMax:
+				pupilMax = hist[t]
+				pupilMaxIndex = t
+		pupilThreshold = pupilMaxIndex + 4
 
-		self.thresholdedImage.save("out/thresh-" + name)
+		lut = [255 if v > pupilThreshold else 0 for v in range(256)]
+	
+		self.thresholdedImage = blurredImage.point(lut)
 
 
 		CannyHoughObject = algorithms.CannyHough(self.thresholdedImage,35)
@@ -51,7 +62,7 @@ class main:
 		self.rPoint = int(ceil(CannyHoughObject.r))
 
 		#########Testing - Display pupil circle in output image###########
-		cv_im = self.pilToCV(self.thresholdedImage)	
+		cv_im = self.pilToCV(inputImage)	
 		dst = cv.CreateImage(inputImage.size,cv.IPL_DEPTH_8U,3)
 		cv.CvtColor(cv_im,dst,cv.CV_GRAY2RGB)
 		cv.Circle(dst,(self.xPoint,self.yPoint),self.rPoint,cv.RGB(255, 0, 0),1,2)
@@ -64,9 +75,8 @@ class main:
 		### What we will do it look for the second peak in the histogram,
 		### then search around that threshold for the optimal value
 		#####EVENTUALLY MOVE TO ALGORITHMS CLASS
-		#####Make threshold class only fot otsu
-		print "Threshold before is %s" % thresholdedImageObject.thr
-		hist = blurredImage.histogram()
+		#####Make threshold class only for otsu eyelid detection
+		print "Threshold before is %s" % pupilThreshold
 		firstMax = -1
 		firstMaxIndex = -1
 		for t in range(70,240):
@@ -113,14 +123,6 @@ class main:
 		cv.SaveImage("out/circle2-"+name,dst)
 
 		##################################################################
-
-		#self.thresholded2Image = thresholded2ImageObject.thresholdImage
-		#firstMax = thresholded2ImageObject.t - 4
-		#print "Firstmax is %s" % firstMax
-		#thresholded3ImageObject = algorithms.thresholdedImage(blurredImage,firstMax + 20,240)
-		#secondMax = thresholded3ImageObject.t - 4
-		#thresholded4ImageObject = algorithms.thresholdedImage(blurredImage,firstMax - 20,240)
-		#self.thresholded2Image.save("out/thresh2-" + name)
 
 		
 

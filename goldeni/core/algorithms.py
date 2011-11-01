@@ -5,7 +5,7 @@ A set of algorithms that perform the iris segmentation.
 import Image
 import cv
 import ImageFilter
-import threshold
+#import threshold
 
 class grayscaledImage:
 	def __init__(self,inputImage):
@@ -41,9 +41,9 @@ class thresholdedImage:
 		"""
 		Constructor for thresholdedImage. Performs Otsu thresholding.
 		"""
-		self.thresholdImageObject = threshold.otsuThresholder(inputImage,tmin,tmax)
-		self.thresholdImage = self.thresholdImageObject.thresholdImage
-		self.thr = self.thresholdImageObject.t
+		#self.thresholdImageObject = threshold.otsuThresholder(inputImage,tmin,tmax)
+		#self.thresholdImage = self.thresholdImageObject.thresholdImage
+		#self.thr = self.thresholdImageObject.t
 
 class CannyHough:
 	# Write functions to intelligently tweak parameters. Create flag network to notify this function.
@@ -54,12 +54,17 @@ class CannyHough:
 		to detect pupil and iris boudaries.
 		"""
 		#Hough transform variables
+		#Hough tranform method (DON'T CHANGE)
 		cv_method = cv.CV_HOUGH_GRADIENT
+		#accumulator resolution. don't change unless nothing can be found
 		acc_res = 3
-		dmin = 15
-		canny = 50
-		votes = 100
-		#make these dependent on image size
+		#min distancr between circles
+		dmin = 1
+		#edge-detection option
+		canny = 200
+		#Number of votes required, eliminates false positives if high enough
+		votes = 200
+		#min and max radius. make these dependent on image size
 		rmin = radmin
 		rmax = 40
 		
@@ -75,26 +80,32 @@ class CannyHough:
 		circleList = []		
 
 		# Main hough loop
+		###Really... fix this, it's bad
 		while 1:
+			#HoughCircles Function
 			circles = cv.HoughCircles(cvImage,self.storage,cv_method,acc_res,dmin,canny,votes,rmin,rmax);
+
 			print "Rows: ", self.storage.rows
 			print "CircleList: ",circleList
+			# If a circle is found, add to array
 			if self.storage.rows >= 1:
 				for i in range(self.storage.rows):
 					a = self.storage[i,0]
 					(x,y,r)=a
 					circleList.append([x,y,r])
-			
+			# Once n circles are found, we're done
 			if len(circleList) < 4:
 				self.storage = cv.CreateMat(50, 1, cv.CV_32FC3)
 				rmin += 5
 				rmax += 5
-				if rmax >= inputImage.size[0]/4:
+				# Radii can't be more than 1/2 image width
+				if rmax >= inputImage.size[0]/2:
 					rmin = 35
 					rmax = 40
 					if votes - 20 <= 0:
 						break
 					votes -= 20
+
 				print "rmin - " + str(rmin)
 				print "rmax - " + str(rmax)
 				print "votes - " + str(votes)
