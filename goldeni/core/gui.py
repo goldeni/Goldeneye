@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import Tkinter
-import Image,ImageTk,tkFileDialog,sys,tkMessageBox,cv
+import Image,ImageTk,tkFileDialog,sys,tkMessageBox
 import main
 #import MySQLdb
 from Tkinter import *
@@ -199,9 +199,9 @@ class mainWindow(Tkinter.Tk):
 
 		newImageObject = main.main(path)
 		newImage = newImageObject.thresholdedImage
-		centerx = newImageObject.xPoint
-		centery = newImageObject.yPoint
-		radius = newImageObject.rPoint
+		#centerx = newImageObject.xPoint
+		#centery = newImageObject.yPoint
+		#radius = newImageObject.rPoint
 
 		loadImage = ImageTk.PhotoImage(newImage)
 		self.newimage = Tkinter.Label(self, image=loadImage)
@@ -209,16 +209,16 @@ class mainWindow(Tkinter.Tk):
 		self.newimage.pack()
 		#self.newimage.grid(row=0,column=0,rowspan=2,columnspan=2)
 
-		self.pupilCenter = Tkinter.Label(self, text="Center: " + str(centerx) + "," + str(centery))
-		self.pupilCenter.pack()
+		#self.pupilCenter = Tkinter.Label(self, text="Center: " + str(centerx) + "," + str(centery))
+		#self.pupilCenter.pack()
 		#pupilCenter.grid(row=2,column=0,columnspan=2)
 
-		self.pupilRadius = Tkinter.Label(self, text="Radius: " + str(radius))
-		self.pupilRadius.pack()
+		#self.pupilRadius = Tkinter.Label(self, text="Radius: " + str(radius))
+		#self.pupilRadius.pack()
 		#pupilCenter.grid(row=3,column=0,columnspan=2)	
 
-		self.button = Tkinter.Button(self, text="Close",command=self.quit,bg="white")
-		self.button.pack(side=RIGHT)
+		#self.button = Tkinter.Button(self, text="Close",command=self.quit,bg="white")
+		#self.button.pack(side=RIGHT)
 		#self.button.grid(row=4,column=0,columnspan=2)
 
 		self.button2 = Tkinter.Button(self, text="Main Menu",command=self.mainmenu,bg="white")
