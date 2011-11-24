@@ -84,6 +84,9 @@ class HoughTransform:
 		self.circle2 = top_a, top_b + top_r
                 return top_a,top_b,top_r
 
+        '''This function is so bad, it should be illegal.
+           There's no excuse for this hack other than to
+           save a large amount of time in iris-detection.'''
         def irisHough(self,pX,pY,rmin):
 		w,h = self.inputImage.size
 		outimg = Image.new('L',(w,h))
@@ -125,8 +128,8 @@ class HoughTransform:
                                         for i in cList:
                                                 #print i,inp[i[0],i[1]]
                                                 if inp[i[0],i[1]] != 255:
-                                                       # votes += (255-(inp[i[0],i[1]]))
-                                                       votes += 1
+                                                       votes += (255-(inp[i[0],i[1]]))
+                                                       #votes += 1
                                         if votes >= maxVotes:
                                                 print "\n\nNew Max: ", votes, r
                                                 maxVotes = votes
@@ -134,6 +137,4 @@ class HoughTransform:
                                         circ.append(maxVotesR)
                                         print "\n",r,votes 
                                         del votes
-                print circ
-                print "Radius of iris is ",maxVotesR
                 return max(circ) 

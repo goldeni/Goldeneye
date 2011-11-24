@@ -60,7 +60,6 @@ class main:
 		print "Threshold 1 saved"
 		print "It took %.3f" % (1000 * PTtime),"ms\n\n\n"
 
-		pupilPixels = pupilThreshImage.load()
 
 
 ########################################################
@@ -82,16 +81,24 @@ class main:
 		print "Threshold 2 saved"
 
 ###########################################################
-
+                preSP = time.time()
 		SobelPupilObject = algorithms.sobelFilter(pupilThreshImage)
 		SobelPupilImage = SobelPupilObject.outputImage
 		SobelPupilImage.save("out/sobelpupil-"+name)
+		SPtime = time.time() - preSP
+		print "Threshold 1 saved"
+		print "It took %.3f" % (1000 * SPtime),"ms\n\n\n"
 
-		SobelIrisObject = algorithms.sobelFilter(irisThreshImage)
-		SobelIrisImage = SobelIrisObject.outputImage
-		SobelIrisImage.save("out/sobeliris-"+name)
 
+                ##################################################
+                ###########Pre-hough pupil-processing.############
+                #Looks for clusters of black to estimate the
+                #pupil size and location. This is a quick hack and
+                #does not work in all cases, such as an image with
+                #a lot of areas as dark as the pupil##############
+                ##################################################
 		prePH = time.time()
+		pupilPixels = pupilThreshImage.load()
 		print "Testing threshold and determining bounding box for pupil..."
 		sumx = 0
 		sumy = 0
@@ -112,7 +119,11 @@ class main:
 		sumy /= amount
 
 		pupilBoxCenter = (sumx, sumy)
-
+                
+                #sumx is the average x-location of the black pixels
+                #sumy "  "   "       y-location "  "   "     "
+                #A good idea would to have radii calculated for 4
+                #directions, left and right, x and y
 		radius = sumx
 		print "Initial radius: ",radius
 		while pupilPixels[radius,sumy] == 0:
@@ -142,40 +153,27 @@ class main:
 		#pupilDraw = pupilDrawObject.drawCircle(ht,k,3)
 		pupilDraw.save("out/pupil-pP2-" + name)
                 
+                preSI = time.time()
+		SobelIrisObject = algorithms.sobelFilter(irisThreshImage)
+		SobelIrisImage = SobelIrisObject.outputImage
+		SobelIrisImage.save("out/sobeliris-"+name)
+		SItime = time.time() - preSI
+		print "Threshold 1 saved"
+		print "It took %.3f" % (1000 * SItime),"ms\n\n\n"
+
+                preIH = time.time()
                 irisHoughObj = hough.HoughTransform(SobelIrisImage,(0,0),(0,0),0,0)
                 iR = irisHoughObj.irisHough(pX,pY,pR)
-                print "Radius is ",iR
-
-		#tL = (pX-5,pY-5)
-		#bR = (pX+5,pY+5)
-
-		#xR = pP0[0] - ht
-		#yR = pP0[1] - k
-		#rR = sqrt(pow(xR,2) + pow(yR,2))
-
-		#print tL,bR,rR
-
-		#inRad = rR
-
-		#SobelIrisImage.save("out/sobel2-" + name)
-
-		#irisEdgesObject = hough.HoughTransform(SobelIrisImage,tL,bR,w/4,h/2)
-		#iP0 = irisEdgesObject.circle0
-		#iP1 = irisEdgesObject.circle1
-		#iP2 = irisEdgesObject.circle2
-
-		#xPR = iP0[0] - ht
-		#yPR = iP0[1] - k
-		#outRad = sqrt(pow(xPR,2) + pow(yPR,2))
-
-		#print "Iris: ",ht,k,inRad,outRad
+                IHtime = time.time() - preIH
+                print "Iris detected"
+                print "It took %.3f" % IHtime,"ms\n\n\n"
 
 		irisDrawObject = imgUtils.Utils(inputImage)
-		#print "Woah, this is heavy"
-		#print ht,k,inRad,outRad
 		irisDraw = irisDrawObject.drawCircle(pX,pY,iR)
 	#	
 		inputImage.save("out/iriscircle1-" + name)
+
+                totalTime = time.time()-initTime
 ###############################################################################################
 		#HoughObject2 = hough.HoughTransform(SobelPupilImage,90,170,"",xPoint,yPoint)
 		##(xPoint2,yPoint2,rPoint2) = HoughObject2.circle
