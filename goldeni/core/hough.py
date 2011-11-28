@@ -1,5 +1,4 @@
 import Image
-import sys #tmp
 from math import sqrt,ceil
 
 class HoughTransform:
@@ -89,7 +88,7 @@ class HoughTransform:
            this hack other than to save a large amount of time in iris-detection.
 	   It essentially populates a list of the points on a circle of radius r,
            then checks how many black points lie on the circle. It then chooses 
-           the circle withe the most votes.'''
+           the circle with the most votes.'''
         def irisHough(self,pX,pY,rmin):
 		w,h = self.inputImage.size
 		outimg = Image.new('L',(w,h))
@@ -116,16 +115,6 @@ class HoughTransform:
                                         # Circles are hard, so we need to use a clever algorithm
                                         #  to generate the list. Specifically, we use
                                         #   http://en.wikipedia.org/wiki/Midpoint_circle_algorithm
-#                                        for xV in range(pX-rmin,pX+rmin+1):
-#                                                p2 = (xV-(pX+xC))*(xV-(pX+xC))
-#                                                r2 = r*r
-#                                                if r2 < p2:
-#                                                        continue
-#                                                posY = sqrt(r2 - p2)+(pY+yC)
-#                                                negY = -sqrt(r2 - p2)+(pY+yC)
-#                                                cList.append((int(xV),int(posY)))
-#                                                cList.append((int(xV),int(negY)))
-
                                         ############################################
                                         f =  1-r
                                         ddF_x = 1

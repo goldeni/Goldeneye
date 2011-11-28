@@ -6,7 +6,7 @@ class SobelFilter:
 	def __init__(self, inputImage):
 		w, h = inputImage.size
 		pixels = inputImage.load()
-		print "Convolution Started"
+#		print "Convolution Started"
 		self.outimg = self.convolve(pixels, w, h)
 
 	# Convolve the kernels with the image to approximate the gradient

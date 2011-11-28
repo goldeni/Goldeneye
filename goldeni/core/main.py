@@ -23,10 +23,13 @@ class main:
 
 		# Create path for saving
 		pathArr = string.split(path,"/")
-		savePath = "out/" + pathArr[1] + "/" + pathArr[2] + "/"
+		##savePath = "out/" + pathArr[1] + "/" + pathArr[2] + "/"
+                savePath = "out/"
 
 		# Make sure directory structure exists for saving
 		self.ensure_dir(savePath)
+		self.ensure_dir(savePath + "/polar/")
+		self.ensure_dir(savePath + "/circles/")
 		
 		# Get the image name
 		name = os.path.basename(path)
@@ -42,23 +45,23 @@ class main:
 		inputImage = Image.open(path)
 
 		w,h = inputImage.size
-                print "Size: ",w,h
+#                print "Size: ",w,h
 
 		# If image is not 8-bit, grayscale it
 		preGS = time.time()
 		grayImageObject = algorithms.grayscaledImage(inputImage)
 		grayscaleImage = grayImageObject.grayImage
 		GStime = time.time() - preGS
-		print "It took %.3f" % (1000 * GStime),"ms\n"
+#		print "It took %.3f" % (1000 * GStime),"ms\n"
 
 		# Blur the image for pupil detection
-                print "Blurring for pupil detection"
+#               print "Blurring for pupil detection"
 		preB = time.time()
 		blurredImageObject = algorithms.blurredImage(grayscaleImage,11)
 		blurredImage = blurredImageObject.blurImage
 		Btime = time.time() - preB
-		print "Blurring Done"
-		print "It took %.3f" % (1000 * Btime),"ms\n"
+#		print "Blurring Done"
+#		print "It took %.3f" % (1000 * Btime),"ms\n"
 
 		prePT = time.time()
 		hist = blurredImage.histogram()
@@ -69,16 +72,16 @@ class main:
 	
 		pupilThreshImage = blurredImage.point(lut)
 		PTtime = time.time() - prePT
-		print "It took %.3f" % (1000 * PTtime),"ms\n"
+#		print "It took %.3f" % (1000 * PTtime),"ms\n"
 
 		preB2 = time.time()
 		iBlurredImageObject = algorithms.blurredImage(grayscaleImage,3)
 		iBlurredImage = blurredImageObject.blurImage
 		B2time = time.time() - preB2
-		print "Blurring pt 2 Done"
-		print "It took %.3f" % (1000 * B2time),"ms\n"
+#		print "Blurring pt 2 Done"
+#		print "It took %.3f" % (1000 * B2time),"ms\n"
 
-		print "Threshold before is %s" % pupilThreshold
+#		print "Threshold before is %s" % pupilThreshold
 		irisThresh = threshObj.irisThresh(pupilThreshold,240)
 
 		lut = [255 if v > irisThresh else 0 for v in range(256)]
@@ -89,7 +92,7 @@ class main:
 		SobelPupilObject = algorithms.sobelFilter(pupilThreshImage)
 		SobelPupilImage = SobelPupilObject.outputImage
 		SPtime = time.time() - preSP
-		print "It took %.3f" % (1000 * SPtime),"ms\n"
+#		print "It took %.3f" % (1000 * SPtime),"ms\n"
 
 
                 ##################################################
@@ -101,7 +104,7 @@ class main:
                 ##################################################
 		prePH = time.time()
 		pupilPixels = pupilThreshImage.load()
-		print "Testing threshold and determining bounding box for pupil..."
+#		print "Testing threshold and determining bounding box for pupil..."
 		sumx = 0
 		sumy = 0
 		amount = 0
@@ -127,45 +130,45 @@ class main:
                 # A good idea would to have radii calculated for 4
                 # directions, left and right, x and y, then average
 		radiusXL = sumx
-		print "Initial radiusXL: ",radiusXL
+#		print "Initial radiusXL: ",radiusXL
 		while pupilPixels[radiusXL,sumy] == 0:
 			radiusXL += 1
 		radiusXL -= sumx - 2
-		print "Final radiusXL = ",radiusXL
+#		print "Final radiusXL = ",radiusXL
 
 		radiusYD = sumy
-		print "Initial radiusYD: ",radiusYD
+#		print "Initial radiusYD: ",radiusYD
 		while pupilPixels[sumx,radiusYD] == 0:
 			radiusYD += 1
 		radiusYD -= sumy - 2
-		print "Final radiusYD = ",radiusYD
+#		print "Final radiusYD = ",radiusYD
 
 		rad = (radiusXL,radiusYD)
 
-		print "Final radius = ", int((radiusXL+radiusYD)/2)
+#		print "Final radius = ", int((radiusXL+radiusYD)/2)
 		avgRad =  int((radiusXL+radiusYD)/2)
 
-		print "Done"
+#		print "Done"
 		HoughObject = hough.HoughTransform(SobelPupilImage,(sumx-1,sumy-1),(4,4),min(rad)-5,max(rad)+3)
 		pX,pY,pR = HoughObject.pupilHough()
 
 		PHtime = time.time() - prePH
-		print "Pupil Circle Fit Done"
-		print "It took %.3f" % (1000 * PHtime),"ms\n"
+#		print "Pupil Circle Fit Done"
+#		print "It took %.3f" % (1000 * PHtime),"ms\n"
 
 
 		preSI = time.time() 
 		SobelIrisObject = algorithms.sobelFilter(irisThreshImage)
 		SobelIrisImage = SobelIrisObject.outputImage
 		SItime = time.time() - preSI
-		print "It took %.3f" % (1000 * SItime),"ms\n"
+#		print "It took %.3f" % (1000 * SItime),"ms\n"
 
                 preIH = time.time()
                 irisHoughObj = hough.HoughTransform(SobelIrisImage,(0,0),(0,0),0,0)
                 iR = irisHoughObj.irisHough(pX,pY,pR)
                 IHtime = time.time() - preIH
-                print "Iris detected"
-                print "It took %.3f" % (1000 * IHtime),"ms\n"
+#                print "Iris detected"
+#                print "It took %.3f" % (1000 * IHtime),"ms\n"
 
 
                 segTime = time.time()-initTime
@@ -173,13 +176,13 @@ class main:
                 print "It took %.3f" % (1000 * segTime),"ms\n"
 
 		preUW = time.time()
-                print "Unwrapping"
+#                print "Unwrapping"
                 unwrapObj = demod.unwrap(inputImage,(pX,pY),pR,iR)
                 polarImg = unwrapObj.unwrap()
-                polarImg.save(savePath + "polar-" + name)
+                polarImg.save(savePath + "/polar/" + name)
                 UWtime = time.time() - preUW
-                print "Unwrapping done"
-                print "It took %.3f" % (1000 * UWtime),"ms\n"
+#                print "Unwrapping done"
+#                print "It took %.3f" % (1000 * UWtime),"ms\n"
 
                 #print "Demodulating"
                 #irisCode = unwrapObj.demod(polarImg)
@@ -207,7 +210,7 @@ class main:
 		pupilDraw = pupilDrawObject.drawCircle(pX,pY,pR)
 		irisDrawObject = imgUtils.Utils(inputImage)
 		irisDraw = irisDrawObject.drawCircle(pX,pY,iR)
-		inputImage.save(savePath + "circles-" + name)
+		inputImage.save(savePath + "/circles/" + name)
 
 	def ensure_dir(self,f):
 		d = os.path.dirname(f)

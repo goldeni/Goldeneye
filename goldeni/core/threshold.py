@@ -48,6 +48,6 @@ class threshold:
 			minIndex = 160
 
 		irisThresh = (firstMaxIndex + secondMaxIndex)/2
-		print "New Threshold: ", firstMaxIndex, secondMaxIndex, minIndex, irisThresh
+#		print "New Threshold: ", firstMaxIndex, secondMaxIndex, minIndex, irisThresh
 
 		return irisThresh 
