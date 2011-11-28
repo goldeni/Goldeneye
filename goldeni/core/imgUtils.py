@@ -9,6 +9,6 @@ class Utils:
         def drawCircle(self,x,y,r):
                 draw = ImageDraw.Draw(self.img)
                 box = ((x-r,y-r),(x+r,y+r))
-                draw.ellipse(box,outline = 128)
+                draw.ellipse(box,outline = 255)
                 del draw
                 return self.img

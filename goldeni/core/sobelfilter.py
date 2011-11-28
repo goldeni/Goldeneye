@@ -39,10 +39,10 @@ class SobelFilter:
 					mag = (abs(sumX)+abs(sumY))/(dim*dim)
 
 				# Normalize bad results
-				#if mag > 96: mag = 255
-				#else: mag = 0
-				if mag > 255: mag = 255
-				elif mag < 0: mag = 0
+				if mag > 96: mag = 255
+				else: mag = 0
+				#if mag > 255: mag = 255
+				#elif mag < 0: mag = 0
 
 				# Output gradient approximation to an image array
 				out[i,j] = 255 - mag

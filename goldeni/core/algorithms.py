@@ -3,10 +3,8 @@ A home for algoriths too complex for the main file, but not complex enough to ha
 """
 
 import Image
-#import cv
 import ImageFilter
 import sobelfilter
-#import threshold
 
 class grayscaledImage:
         def __init__(self,inputImage):
