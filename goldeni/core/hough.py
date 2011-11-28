@@ -171,4 +171,4 @@ class HoughTransform:
                                         circ.append(maxVotesR)
                  #                       print "\n",r,votes 
                                         del votes
-                return max(circ) 
+                return maxVotesR 

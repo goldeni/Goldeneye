@@ -135,4 +135,4 @@ class Gaussian:
                 self.d = d
                 self.peak = peak
 
-                alpha = (d-1) *
+                alpha = (d-1)

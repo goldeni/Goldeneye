@@ -5,7 +5,8 @@ import Image
 import sys
 import glob
 import time
-import matplotlib.pyplot as plt
+import string
+#import matplotlib.pyplot as plt
 
 #modules
 import algorithms
@@ -20,6 +21,13 @@ class main:
 		# Start timing  
 		initTime = time.time()
 
+		# Create path for saving
+		pathArr = string.split(path,"/")
+		savePath = "out/" + pathArr[1] + "/" + pathArr[2] + "/"
+
+		# Make sure directory structure exists for saving
+		self.ensure_dir(savePath)
+		
 		# Get the image name
 		name = os.path.basename(path)
 
@@ -61,7 +69,6 @@ class main:
 	
 		pupilThreshImage = blurredImage.point(lut)
 		PTtime = time.time() - prePT
-		print "Threshold 1 saved"
 		print "It took %.3f" % (1000 * PTtime),"ms\n"
 
 		preB2 = time.time()
@@ -77,13 +84,11 @@ class main:
 		lut = [255 if v > irisThresh else 0 for v in range(256)]
 
 		irisThreshImage = iBlurredImage.point(lut)
-		print "Threshold 2 saved"
 
                 preSP = time.time()
 		SobelPupilObject = algorithms.sobelFilter(pupilThreshImage)
 		SobelPupilImage = SobelPupilObject.outputImage
 		SPtime = time.time() - preSP
-		print "Threshold 1 saved"
 		print "It took %.3f" % (1000 * SPtime),"ms\n"
 
 
@@ -121,16 +126,27 @@ class main:
                 # sumy is the average y-location of the black pixels
                 # A good idea would to have radii calculated for 4
                 # directions, left and right, x and y, then average
-		radius = sumx
-		print "Initial radius: ",radius
-		while pupilPixels[radius,sumy] == 0:
-			radius += 1
-		radius -= sumx - 2
+		radiusXL = sumx
+		print "Initial radiusXL: ",radiusXL
+		while pupilPixels[radiusXL,sumy] == 0:
+			radiusXL += 1
+		radiusXL -= sumx - 2
+		print "Final radiusXL = ",radiusXL
 
-		print "Final radius = ",radius
+		radiusYD = sumy
+		print "Initial radiusYD: ",radiusYD
+		while pupilPixels[sumx,radiusYD] == 0:
+			radiusYD += 1
+		radiusYD -= sumy - 2
+		print "Final radiusYD = ",radiusYD
+
+		rad = (radiusXL,radiusYD)
+
+		print "Final radius = ", int((radiusXL+radiusYD)/2)
+		avgRad =  int((radiusXL+radiusYD)/2)
 
 		print "Done"
-		HoughObject = hough.HoughTransform(SobelPupilImage,(sumx-1,sumy-1),(4,4),radius-4,radius+4)
+		HoughObject = hough.HoughTransform(SobelPupilImage,(sumx-1,sumy-1),(4,4),min(rad)-5,max(rad)+3)
 		pX,pY,pR = HoughObject.pupilHough()
 
 		PHtime = time.time() - prePH
@@ -142,7 +158,6 @@ class main:
 		SobelIrisObject = algorithms.sobelFilter(irisThreshImage)
 		SobelIrisImage = SobelIrisObject.outputImage
 		SItime = time.time() - preSI
-		print "Threshold 1 saved"
 		print "It took %.3f" % (1000 * SItime),"ms\n"
 
                 preIH = time.time()
@@ -153,17 +168,20 @@ class main:
                 print "It took %.3f" % (1000 * IHtime),"ms\n"
 
 
-                totalTime = time.time()-initTime
+                segTime = time.time()-initTime
 		print "Segmentation Done"
-                print "It took %.3f" % (1000 * totalTime),"ms\n"
+                print "It took %.3f" % (1000 * segTime),"ms\n"
 
+		preUW = time.time()
                 print "Unwrapping"
                 unwrapObj = demod.unwrap(inputImage,(pX,pY),pR,iR)
                 polarImg = unwrapObj.unwrap()
-                polarImg.save("out/polar-" + name)
-                print "Unwrapping done and saved"
+                polarImg.save(savePath + "polar-" + name)
+                UWtime = time.time() - preUW
+                print "Unwrapping done"
+                print "It took %.3f" % (1000 * UWtime),"ms\n"
 
-                print "Demodulating"
+                #print "Demodulating"
                 #irisCode = unwrapObj.demod(polarImg)
 
 
@@ -172,24 +190,30 @@ class main:
                 # This will be set in the prefences.
                 self.saveImagePref = 0
                 if (self.saveImagePref == 1):
-	        	grayscaleImage.save("out/gray-" + name)
-		        blurredImage.save("out/blur-" + name)
-        		pupilThreshImage.save("out/thresh1-" + name)
-        		irisThreshImage.save("out/thresh2-" + name)
-        		SobelPupilImage.save("out/sobelpupil-"+name)
-        		SobelIrisImage.save("out/sobeliris-"+name)
+	        	grayscaleImage.save(savePath + "gray-" + name)
+		        blurredImage.save(savePath + "blur-" + name)
+        		pupilThreshImage.save(savePath + "threshp-" + name)
+        		irisThreshImage.save(savePath + "threshi-" + name)
+        		SobelPupilImage.save(savePath + "sobelp-"+name)
+        		SobelIrisImage.save(savePath + "sobeli-"+name)
 
                 self.saveHist = 0
                 if (self.saveHist == 1):
         		plt.bar(ind,hist,color='b')
-        		plt.savefig("out/hist-" + name + ".png")
+        		plt.savefig(savePath + "hist-" + name + ".png")
 
 		# Draw circles on result image
 		pupilDrawObject = imgUtils.Utils(inputImage)
 		pupilDraw = pupilDrawObject.drawCircle(pX,pY,pR)
 		irisDrawObject = imgUtils.Utils(inputImage)
 		irisDraw = irisDrawObject.drawCircle(pX,pY,iR)
-		inputImage.save("out/iriscircle1-" + name)
+		inputImage.save(savePath + "circles-" + name)
+
+	def ensure_dir(self,f):
+		d = os.path.dirname(f)
+		if not os.path.exists(d):
+			os.makedirs(d)
+
 
 
 if __name__ == "__main__":
