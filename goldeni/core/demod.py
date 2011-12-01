@@ -118,7 +118,7 @@ class demod:
                                 filterArray[i,j] = filterArray[0,j]
 
                 GaussianObj = Gaussian(d)
-                GaussianFilter = GaussianObj.generateFilter()
+                GaussianFilter = GaussianObj.genFilter()
                 multiplyBy(GaussianFilter)
 
                 for i in range(d):
@@ -130,9 +130,26 @@ class demod:
                         for j in range(d):
                                 filterArray[i,j] -= rowSum / d
 
+
+
 class Gaussian:
         def __init__(self,d):
                 self.d = d
                 self.peak = peak
 
                 alpha = (d-1)
+        def outputPixel(self);
+                sum = 0
+                pixelValue = 0
+
+                for i,e in enumerate(
+        def getFilter(self):
+                # Discrete approximation of Gaussian kernel with sigma 1.4
+                return [[2,4 ,5 ,4 ,2],
+                        [4,9 ,12,9 ,4],
+                        [5,12,15,12,5],
+                        [4,9 ,12,9 ,4],
+                        [2,4 ,5 ,4 ,2]]
+        
+        def addValue(self,x,y,pixelValue,d):
+                values[x + y*d] = int(pixelValue * self.getFilter[y][x])

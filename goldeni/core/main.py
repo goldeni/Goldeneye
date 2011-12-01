@@ -16,7 +16,7 @@ import hough
 import imgUtils
 import demod
 
-class main:
+class main:        
 	def __init__(self,path):
 		# Start timing  
 		initTime = time.time()
