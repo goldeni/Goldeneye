@@ -43,9 +43,12 @@ class unwrap:
 class demod:
         def __init__(self, image):
                 self.image = image
+                self.pixelIndex = image.load()
 
         def demod(self):
-                w,h = self.image.size()
+                w,h = self.image.size
+
+                bitCode = [0]*2048
 
                 ang = 256
                 rad = 1024/ang
@@ -53,9 +56,6 @@ class demod:
                 maxFilter = h/3
 
                 bitCodePos = 0
-
-                pSine = sineWavelet()
-                pCosine = cosinWavelet()
 
                 for aSlice in range(ang):
                         theta = aSlice
@@ -67,89 +67,139 @@ class demod:
                                 else:
                                         filterHeight = 2*(h-radius)-1
 
+                                if filterHeight > w-1:
+                                        filterHeight = w-1
+
                                 if filterHeight > maxFilter:
                                         filterHeight = maxFilter
+                                
+                                pSinObj = sinusoidalFilter(filterHeight,"sine")
+                                pCosObj = sinusoidalFilter(filterHeight,"cosine")
 
-                                #generate filters
+                                pSine = pSinObj.generateFilter()
+                                pCosine = pCosObj.generateFilter()
 
-                                bitCode[bitCodePos] = gaborToPixel(r,theta,pCosine,rawImage)
-                                bitCode[bitCodePos+1] = gaborToPixel(r,theta,pSine,rawImage)
+                                bitCode[bitCodePos] = self.gaborToPixel(radius,theta,pCosine,self.image,filterHeight)
+                                bitCode[bitCodePos+1] = self.gaborToPixel(radius,theta,pSine,self.image,filterHeight)
 
                                 bitCodePos += 2
+                return bitCode
 
-        def gaborToPixel(self, rho, phi, sFilter, d):
+        def gaborToPixel(self, rho, phi, sFilter, image,d):
                 filterSize = d
 
-                runningTotal = 0
+                runningTotal = 0.0
 
-                angles = self.image.size[1]
+                angles = 256
 
                 for i in range(filterSize):
                         for j in range(filterSize):
-                                imageY = j+ phi - (filterSize/2)
+                                imageY = j + phi - (filterSize/2)
 
-                                imageY %= n
+                                imageY %= angles
 
                                 if imageY < 0:
                                         imageY += angles
 
                                 imageX = i + rho - (filterSize/2)
 
-                                runningTotal += sFilter #get filter for (i,j)
-                                  #* pixelIndex(imageY,imageX)
+                                a = sFilter[i][j]
+                                print "imageX: ",imageX
+                                print "imageY: ",imageY
+                                print "Value: ",self.pixelIndex[imageX,imageY]
+
+                                runningTotal += sFilter[i][j] * self.pixelIndex[imageX,imageY]
 
                                 if runningTotal >= 0:
                                         return 1
                                 else:
                                         return 0
 
-        def genFilter(self):
+
+
+
+class sinusoidalFilter:
+        def __init__(self,d,filterType):
+                self.d = d
+                self.filterType = filterType
+
+        def generateFilter(self):
                 sum = 0
-                for j in range(d):
-                        phi = j - (d/2)
-                        filterArray[0,j] = waveletValue(phi, d)
-                        sum += filterArray[0,j]
 
-                for j in range(d):
-                        filterArray -= (sum/d)
+                filterArray = [[0]*self.d]*self.d
 
-                for i in range(1,d):
-                        for j in range(d):
-                                filterArray[i,j] = filterArray[0,j]
+                for i in xrange(self.d):
+                        phi = i - (self.d/2)
+                        if self.filterType == "sine":
+                                filterArray[0][i] = self.cosWaveletValue(phi,self.d)
+                        elif self.filterType == "cosine":
+                                filterArray[0][i] = self.sinWaveletValue(phi,self.d)
+                        else:
+                                print "Not a valid filter type: something went wrong"
+                                sys.exit()
+                                        
+                        sum += filterArray[0][i]
+                for i in xrange(self.d):
+                        filterArray[0][i] -= (sum / self.d)
+                for i in xrange(1,self.d):
+                        for j in xrange(self.d):
+                                filterArray[i][j] = filterArray[0][j]
 
-                GaussianObj = Gaussian(d)
-                GaussianFilter = GaussianObj.genFilter()
-                multiplyBy(GaussianFilter)
+                gausObj = Gaussian(self.d)
+                gaussianFilter = gausObj.generateFilter()
+#                print "gausFilt: ",gaussianFilter
 
-                for i in range(d):
+                newFilt = self.multiplyBy(gaussianFilter,filterArray)
+#                print "newFilt: ",newFilt
+
+                filterArray = newFilt
+
+                for i in xrange(self.d):
                         rowSum = 0
+                        for j in xrange(self.d):
+                                rowSum += filterArray[i][j]
 
-                        for j in range(d):
-                                rowSum += filterArray[i,j]
+                        for j in xrange(self.d):
+                                filterArray[i][j] -= rowSum / float(self.d)
+                return filterArray
 
-                        for j in range(d):
-                                filterArray[i,j] -= rowSum / d
+        def cosWaveletValue(self,phi,d):
+                return math.cos(math.pi * phi / (d/2))
+
+        def sinWaveletValue(self,phi,d):
+                return math.sin(math.pi * phi / (d/2))
+
+        def multiplyBy(self,filt,otherFilter):
+                d = len(filt)
+                if d != len(otherFilter):
+                        print "Error: Some array problems happened"
+                        sys.exit()
+                for i in xrange(d):
+                        for j in xrange(d):
+                                filt[i][j] *= otherFilter[i][j]
+
+                return filt
 
 
 
 class Gaussian:
         def __init__(self,d):
                 self.d = d
-                self.peak = peak
+                self.peak = 15.0
+                self.alpha = (d-1) * 0.4770322291
+                self.beta = self.alpha
 
-                alpha = (d-1)
-        def outputPixel(self);
-                sum = 0
-                pixelValue = 0
+        def generateFilter(self):
+                filterArray = [[0]*self.d]*self.d
+                for i in xrange(self.d):
+                        rho = i-(self.d/2)
+                        for j in xrange(self.d):
+                                phi = j-(self.d/2)
+                                filterArray[i][j] = self.waveletValue(rho,phi)
 
-                for i,e in enumerate(
-        def getFilter(self):
-                # Discrete approximation of Gaussian kernel with sigma 1.4
-                return [[2,4 ,5 ,4 ,2],
-                        [4,9 ,12,9 ,4],
-                        [5,12,15,12,5],
-                        [4,9 ,12,9 ,4],
-                        [2,4 ,5 ,4 ,2]]
-        
-        def addValue(self,x,y,pixelValue,d):
-                values[x + y*d] = int(pixelValue * self.getFilter[y][x])
+                return filterArray
+
+        def waveletValue(self,rho,phi):
+                return self.peak * math.exp(-math.pow(rho,2)/math.pow(self.alpha,2)) * math.exp(-math.pow(phi,2) / math.pow(self.beta,2))
+
+

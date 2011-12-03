@@ -181,11 +181,12 @@ class main:
                 polarImg = unwrapObj.unwrap()
                 polarImg.save(savePath + "/polar/" + name)
                 UWtime = time.time() - preUW
-#                print "Unwrapping done"
-#                print "It took %.3f" % (1000 * UWtime),"ms\n"
+                print "Unwrapping done"
+                print "It took %.3f" % (1000 * UWtime),"ms\n"
 
-                #print "Demodulating"
-                #irisCode = unwrapObj.demod(polarImg)
+                print "Demodulating"
+                gaborObj = demod.demod(polarImg)
+                irisCode = gaborObj.demod()
 
 
 		# Save various images.
