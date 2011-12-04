@@ -6,6 +6,7 @@ import sys
 import glob
 import time
 import string
+from string import join
 #import matplotlib.pyplot as plt
 
 #modules
@@ -39,7 +40,7 @@ class main:
                 if name == "Thumbs.db":
                         sys.exit()
 
-		print "Processing File: ",name
+		##########################################print "Processing File: ",name
 
 		# Open image
 		inputImage = Image.open(path)
@@ -172,8 +173,8 @@ class main:
 
 
                 segTime = time.time()-initTime
-		print "Segmentation Done"
-                print "It took %.3f" % (1000 * segTime),"ms\n"
+		#print "Segmentation Done"
+                #print "It took %.3f" % (1000 * segTime),"ms\n"
 
 		preUW = time.time()
 #                print "Unwrapping"
@@ -181,13 +182,14 @@ class main:
                 polarImg = unwrapObj.unwrap()
                 polarImg.save(savePath + "/polar/" + name)
                 UWtime = time.time() - preUW
-                print "Unwrapping done"
-                print "It took %.3f" % (1000 * UWtime),"ms\n"
+                #print "Unwrapping done"
+                #print "It took %.3f" % (1000 * UWtime),"ms\n"
 
-                print "Demodulating"
+                #print "Demodulating"
                 gaborObj = demod.demod(polarImg)
                 irisCode = gaborObj.demod()
-
+               
+                print irisCode
 
 		# Save various images.
                 # Mainly used to debug in case of a failure.
@@ -212,6 +214,9 @@ class main:
 		irisDrawObject = imgUtils.Utils(inputImage)
 		irisDraw = irisDrawObject.drawCircle(pX,pY,iR)
 		inputImage.save(savePath + "/circles/" + name)
+                with open(name+'codes.txt','w') as f:
+                        f.write(str(irisCode))
+                f.close()
 
 	def ensure_dir(self,f):
 		d = os.path.dirname(f)

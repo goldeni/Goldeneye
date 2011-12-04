@@ -60,7 +60,6 @@ class demod:
                 for aSlice in range(ang):
                         theta = aSlice
                         for rSlice in range(rad):
-                                print "What up dog?",aSlice,rSlice
                                 radius = int(((rSlice * (self.h-6)) / (2*rad)) + 3)
 
                                 if radius < self.h-radius:
@@ -84,7 +83,7 @@ class demod:
                                 bitCode[bitCodePos+1] = self.gaborToPixel(radius,theta,pSine,self.image,filterHeight)
 
                                 bitCodePos += 2
-                return "IrisCode: ", bitCode
+                return bitCode
 
         def gaborToPixel(self, rho, phi, sFilter, image,d):
                 filterSize = len(sFilter)
