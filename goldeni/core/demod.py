@@ -12,7 +12,7 @@ class unwrap:
                 ang = 256
                 w = self.iR - self.pR
                 
-                polarImg = Image.new("L",(w,ang))
+                polarImg = Image.new("L",(ang,w))
                 iRect = polarImg.load()
 
                 for r in range(w):
@@ -20,13 +20,13 @@ class unwrap:
                                 curPoint = self.getLoc(c,r)
                                 curVal = self.getVal(c,r)
 
-                                iRect[r,c] = curVal
+                                iRect[c,r] = curVal
                 return polarImg
 
         def getLoc(self, rtheta, r):
                 theta = rtheta * (math.pi / 128)
 
-                r = int(r + self.pR)
+                r = r + self.pR
 
                 x = int(r * math.cos(theta))
                 y = int(r * math.sin(theta))
@@ -44,31 +44,32 @@ class demod:
         def __init__(self, image):
                 self.image = image
                 self.pixelIndex = image.load()
+                self.w,self.h = self.image.size
 
         def demod(self):
-                w,h = self.image.size
 
                 bitCode = [0]*2048
 
                 ang = 256
                 rad = 1024/ang
 
-                maxFilter = h/3
+                maxFilter = int(self.h/3)
 
                 bitCodePos = 0
 
                 for aSlice in range(ang):
                         theta = aSlice
                         for rSlice in range(rad):
-                                radius = ((rSlice * (h-6)) / (2*rad)) + 3
+                                print "What up dog?",aSlice,rSlice
+                                radius = int(((rSlice * (self.h-6)) / (2*rad)) + 3)
 
-                                if radius < h-radius:
+                                if radius < self.h-radius:
                                         filterHeight = 2*radius-1
                                 else:
-                                        filterHeight = 2*(h-radius)-1
+                                        filterHeight = 2*(self.h-radius)-1
 
-                                if filterHeight > w-1:
-                                        filterHeight = w-1
+                                if filterHeight > self.w-1:
+                                        filterHeight = self.w-1
 
                                 if filterHeight > maxFilter:
                                         filterHeight = maxFilter
@@ -83,14 +84,14 @@ class demod:
                                 bitCode[bitCodePos+1] = self.gaborToPixel(radius,theta,pSine,self.image,filterHeight)
 
                                 bitCodePos += 2
-                return bitCode
+                return "IrisCode: ", bitCode
 
         def gaborToPixel(self, rho, phi, sFilter, image,d):
-                filterSize = d
+                filterSize = len(sFilter)
 
                 runningTotal = 0.0
 
-                angles = 256
+                angles = self.w
 
                 for i in range(filterSize):
                         for j in range(filterSize):
@@ -103,17 +104,21 @@ class demod:
 
                                 imageX = i + rho - (filterSize/2)
 
-                                a = sFilter[i][j]
-                                print "imageX: ",imageX
-                                print "imageY: ",imageY
-                                print "Value: ",self.pixelIndex[imageX,imageY]
+                                try:
+                                        runningTotal += sFilter[i][j] * self.pixelIndex[imageX,imageX]
+                                except IndexError:
+                                        pass
+                                        print "Index Error"
+                                        print "i,j",i,j
+                                        print "imageX: ",imageX
+                                        print "imageY: ",imageY
+                                        print sFilter[i][j]
+                                        print "Value: ",self.pixelIndex[imageY,imageX],"\n"
 
-                                runningTotal += sFilter[i][j] * self.pixelIndex[imageX,imageY]
-
-                                if runningTotal >= 0:
-                                        return 1
-                                else:
-                                        return 0
+                if runningTotal >= 0:
+                        return 1
+                else:
+                        return 0
 
 
 
