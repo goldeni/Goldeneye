@@ -104,7 +104,7 @@ class demod:
                                 imageX = i + rho - (filterSize/2)
 
                                 try:
-                                        runningTotal += sFilter[i][j] * self.pixelIndex[imageX,imageX]
+                                        runningTotal += sFilter[i][j] * self.pixelIndex[imageY,imageX]
                                 except IndexError:
                                         pass
                                         print "Index Error"
