@@ -1,9 +1,0 @@
-Finish iriscode generation class
-
-Create function to output iriscodes, personID, eye, and picID to a comma-separated file. This will make entry into a database much easier.
-
-For each person-eye, compare each iricode to each other and output the comparisons and hamming distances to file.
-
-	This will take C(n,2) comparisons per eye for n images of an eye. If we compare left and right eyes, n is increased obviously. Luckily, there is at most 5-6 images per eye, or 10 images for both L and R. So these comparisons, as a means of preprocessing and analysis, will not be computationally expensive. If we do this with a database, it will be expensive no matter what method we use, so we can't do this kind of comparison with a database.
-
-Use cxfreeze and pyinstaller to create standalone Linux and Windows executables.
