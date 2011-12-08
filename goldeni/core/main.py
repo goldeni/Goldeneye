@@ -33,7 +33,8 @@ class main:
                         writeString += str(names[i]) + '\t' + str(self.codes[i]) + '\n'
                 #writeString = reduce(lambda x,y:str(x)+'\n'+str(y),self.codes)
                 savePath = "out/"
-                with open(savePath+'/codes.txt','w') as f:
+                with open('codes.txt','w') as f:
+                        print "Writing to file",f
                         f.write(writeString)
                 f.close()
 
