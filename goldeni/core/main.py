@@ -19,24 +19,25 @@ import demod
 
 class main:        
         def __init__(self,paths):
-                paths = filter(lambda x: not(x.endswith('.db')),paths)
-                names = [os.path.basename(i) for i in paths]
-                self.codes = [self.process(paths[i]) for i in xrange(len(paths))]
+		self.paths=paths
+                #paths = filter(lambda x: not(x.endswith('.db')),paths)
+                #names = [os.path.basename(i) for i in paths]
+                #self.codes = [self.process(paths[i]) for i in xrange(len(paths))]
 #             for i in range(len(self.codes)):
 #                        for j in range(len(self.codes)):
 #                                a = self.codes[i]
 #                                b = self.codes[j]
 #                                hd = reduce(lambda x,y:x+y,[a[p]^b[p] for p in xrange(2048)])/2048.0
 #                                print i,j,":",hd
-                writeString = ''
-                for i in range(len(names)):
-                        writeString += str(names[i]) + '\t' + str(self.codes[i]) + '\n'
+                #writeString = ''
+                #for i in range(len(names)):
+                #        writeString += str(names[i]) + '\t' + str(self.codes[i]) + '\n'
                 #writeString = reduce(lambda x,y:str(x)+'\n'+str(y),self.codes)
-                savePath = "out/"
-                with open('codes.txt','w') as f:
-                        print "Writing to file",f
-                        f.write(writeString)
-                f.close()
+                #savePath = "out/"
+                #with open('codes.txt','w') as f:
+                #        print "Writing to file",f
+                #        f.write(writeString)
+                #f.close()
 
         def process(self,path):
                 # Start timing  
@@ -170,7 +171,7 @@ class main:
                 IHtime = time.time() - preIH
 
                 preUW = time.time()
-                unwrapObj = demod.unwrap(inputImage,(pX,pY),pR,iR)
+                unwrapObj = demod.unwrap(grayscaleImage,(pX,pY),pR,iR)
                 polarImg = unwrapObj.unwrap()
                 polarImg.save(savePath + "/polar/" + name)
                 UWtime = time.time() - preUW
@@ -209,12 +210,11 @@ class main:
                 del irisThreshImage
                 del SobelPupilImage
                 del SobelIrisImage
-                del inputImage
 
                 print "Done"
                 segTime = time.time()-initTime
                 print "It took %.3f" % (1000 * segTime),"ms\n"
-                return irisCode
+                return irisCode, inputImage
 
         def ensure_dir(self,f):
                 d = os.path.dirname(f)
